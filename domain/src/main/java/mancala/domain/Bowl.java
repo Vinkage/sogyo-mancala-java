@@ -8,8 +8,6 @@ interface Bowl {
 
     Player getPlayerThatOwnsMe();
 
-    Bowl takeOneAndContinue(int remainingRocks);
-
     static int calculateBoardPosition(int startPosition, int addedBowlsCount) {
         if ((startPosition + addedBowlsCount) > 14) {
             return ((addedBowlsCount + startPosition) - 14);

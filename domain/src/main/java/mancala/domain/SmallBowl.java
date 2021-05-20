@@ -33,7 +33,7 @@ public class SmallBowl implements Bowl {
     public void play() {
         if ((!this.playerThatOwnsMe.hasTheTurn()) || (this.myRocks == 0));
         else {
-            Bowl playEndedInThisBowl = Recursive.distributeAntiClockWise(this.myRocks, this.getNextBowl());
+            Bowl playEndedInThisBowl = new RecursiveFlipFlop().distributeAntiClockWise(this.myRocks, this.getNextBowl());
             this.myRocks = 0;
 
             if (!(playEndedInThisBowl.getClass() == Kalaha.class&&playEndedInThisBowl.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe()))) {
@@ -52,34 +52,33 @@ public class SmallBowl implements Bowl {
                     opposite.myRocks = 0;
                     this.getKalaha().acceptBooty(booty);
                 }
-
             }
-        }
-    }
 
-    SmallBowl getNextSmallBowlRepeat(int i) {
-        Recursive recursive = new Recursive();
-        return recursive.getNextSmallBowl(i, this);
+            // TODO everyting empty?
+
+            // TODO player rocks greater?
+        }
     }
 
     public SmallBowl getOpposite() {
         Bowl kalaha = this.getNextBowl();
-        Recursive recursive = new Recursive();
+        RecursiveFlipFlop recursiveFlipFlop = new RecursiveFlipFlop();
         int i = 0;
         while (kalaha.getClass() != Kalaha.class) {
             i++;
             kalaha = kalaha.getNextBowl();
         }
-        return (SmallBowl) recursive.getNextSmallBowl(i-1, (SmallBowl) kalaha.getNextBowl());
+        return (SmallBowl) recursiveFlipFlop.getNextSmallBowl(i-1, (SmallBowl) kalaha.getNextBowl());
     }
 
-    Kalaha getKalaha() {
+    public Kalaha getKalaha() {
         Bowl kalaha = this.getNextBowl();
         while (kalaha.getClass() != Kalaha.class)
             kalaha = kalaha.getNextBowl();
         return (Kalaha) kalaha;
     }
 
+    @Override
     public int getMyRocks() {
         return this.myRocks;
     }
@@ -89,47 +88,23 @@ public class SmallBowl implements Bowl {
         return nextBowl;
     }
 
+    public SmallBowl getNextSmallBowlRepeat(int i) {
+        RecursiveFlipFlop recursiveFlipFlop = new RecursiveFlipFlop();
+        return recursiveFlipFlop.getNextSmallBowl(i, this);
+    }
+
     @Override
     public Player getPlayerThatOwnsMe() {
         return playerThatOwnsMe;
     }
 
-    @Override
-    public Bowl takeOneAndContinue(int remainingRocks) {
+    private Bowl takeOneAndContinue(int remainingRocks) {
         this.myRocks++;
         if (remainingRocks == 1)
-            return Recursive.distributeAntiClockWise(--remainingRocks, this);
+            return new RecursiveFlipFlop().distributeAntiClockWise(--remainingRocks, this);
         else
-            return Recursive.distributeAntiClockWise(--remainingRocks, this.getNextBowl());
+            return new RecursiveFlipFlop().distributeAntiClockWise(--remainingRocks, this.getNextBowl());
     }
-
-    static class Recursive {
-        static Bowl distributeAntiClockWise(int remainingRocks, Bowl currentBowl) {
-            Boolean opponentKalahaCondition = (currentBowl.getClass() == Kalaha.class)&&!(currentBowl.getPlayerThatOwnsMe().hasTheTurn());
-            if (remainingRocks == 0) {
-                return currentBowl;
-            } else if (opponentKalahaCondition)
-                return distributeAntiClockWise(remainingRocks, currentBowl.getNextBowl());
-            else if (currentBowl.getClass() == Kalaha.class) {
-                Kalaha tmpKalaha = (Kalaha) currentBowl;
-                return tmpKalaha.takeOneAndContinue(remainingRocks);
-            } else {
-                SmallBowl tmpSmallBowl = (SmallBowl) currentBowl;
-                return tmpSmallBowl.takeOneAndContinue(remainingRocks);
-            }
-        }
-
-        SmallBowl getNextSmallBowl(int remainingNexts, Bowl currentBowl) {
-            if (remainingNexts > 0)
-                return getNextSmallBowl(--remainingNexts, currentBowl.getNextBowl());
-            else if (currentBowl.getClass() == Kalaha.class)
-                return getNextSmallBowl(remainingNexts, currentBowl.getNextBowl());
-            else
-                return (SmallBowl) currentBowl;
-
-        }
-    }
-
 
     // Recurses through board positions until connected again to startBowl
     SmallBowl(int startPosition, int addedBowlsCount, Bowl startBowl, Player playerOwningThisSide) {
@@ -149,5 +124,29 @@ public class SmallBowl implements Bowl {
 
         else
             this.nextBowl = null;
+    }
+
+    class RecursiveFlipFlop {
+        Bowl distributeAntiClockWise(int remainingRocks, Bowl currentBowl) {
+            if (remainingRocks == 0)
+                return currentBowl;
+            else if (currentBowl.getClass() == Kalaha.class) {
+                Kalaha tmpKalaha = (Kalaha) currentBowl;
+                return tmpKalaha.new RecursiveFlipFlop().distributeAntiClockWise(remainingRocks, tmpKalaha);
+            } else {
+                SmallBowl tmpSmallBowl = (SmallBowl) currentBowl;
+                return tmpSmallBowl.takeOneAndContinue(remainingRocks);
+            }
+        }
+
+        SmallBowl getNextSmallBowl(int remainingNexts, Bowl currentBowl) {
+            if (remainingNexts > 0)
+                return getNextSmallBowl(--remainingNexts, currentBowl.getNextBowl());
+            else if (currentBowl.getClass() == Kalaha.class)
+                return getNextSmallBowl(remainingNexts, currentBowl.getNextBowl());
+            else
+                return (SmallBowl) currentBowl;
+
+        }
     }
 }

@@ -1,8 +1,6 @@
 package mancala.domain;
 
-import java.beans.Expression;
-
-public class Kalaha implements Bowl {
+class Kalaha implements Bowl {
     private int myRocks;
     private final Player playerThatOwnsMe;
     private final Bowl nextBowl;
@@ -26,12 +24,6 @@ public class Kalaha implements Bowl {
         else {
             this.nextBowl = new SmallBowl(startPosition, ++addedBowlsCount, startBowl, playerOwningThisSide.getOpponent());
         }
-
-
-    }
-
-    public void acceptBooty(int booty) {
-        this.myRocks = this.myRocks + booty;
     }
 
     @Override
@@ -49,12 +41,31 @@ public class Kalaha implements Bowl {
         return this.playerThatOwnsMe;
     }
 
-    @Override
-    public Bowl takeOneAndContinue(int remainingRocks) {
+    private Bowl takeOneAndContinue(int remainingRocks) {
         this.myRocks++;
         if (remainingRocks == 1)
-            return SmallBowl.Recursive.distributeAntiClockWise(--remainingRocks, this);
-        else
-            return SmallBowl.Recursive.distributeAntiClockWise(--remainingRocks, this.getNextBowl());
+            return new RecursiveFlipFlop().distributeAntiClockWise(--remainingRocks, this);
+        else {
+            SmallBowl smallBowl = (SmallBowl) this.getNextBowl();
+            return smallBowl.new RecursiveFlipFlop().distributeAntiClockWise(--remainingRocks, smallBowl);
+        }
+    }
+
+    class RecursiveFlipFlop {
+        Bowl distributeAntiClockWise(int remainingRocks,  Kalaha currentBowl) {
+            if (remainingRocks == 0)
+                return currentBowl;
+            else if (!(Kalaha.this.getPlayerThatOwnsMe().hasTheTurn())) {
+                SmallBowl smallBowl = (SmallBowl) currentBowl.getNextBowl();
+                return smallBowl.new RecursiveFlipFlop().distributeAntiClockWise(remainingRocks, smallBowl);
+            } else {
+                return takeOneAndContinue(remainingRocks);
+            }
+
+        }
+    }
+
+    void acceptBooty(int booty) {
+        this.myRocks = this.myRocks + booty;
     }
 }

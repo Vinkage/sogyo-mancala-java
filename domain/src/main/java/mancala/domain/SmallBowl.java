@@ -105,6 +105,7 @@ public class SmallBowl extends Bowl {
         } else if (position == 14) {
             this.nextBowl = new SmallBowl(8, 1, this, this.playerThatOwnsMe);
         }
+        //TODO what happens if less than 0?
     }
 
 

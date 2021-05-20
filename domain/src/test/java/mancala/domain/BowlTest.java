@@ -167,6 +167,15 @@ class BowlTest {
                 assertFalse(firstSmallBowlPlayer.getPlayerThatOwnsMe().hasTheTurn());
             }
 
+            @Test
+            public void in_own_empty_small_bowl_and_opposite_has_rocks_When_player_plays_this_bowl_Then_opposite_and_rock_are_added_to_kalaha() {
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(5).play();
+                SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6);
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(5).play();
+                firstSmallBowlPlayer.play();
+                assertEquals(7, firstSmallBowlPlayer.getKalaha().getMyRocks());
+            }
+
         }
 
 

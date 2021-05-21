@@ -30,6 +30,8 @@ class BowlTest {
             if ((position + traversedCount) > 14) {
                 // if looping around the board, position = ((start+traversed) - total)
                 // in other words the amount of bowls that the absolute position is greater than the board's total bowls
+                //
+                // Only relevant during construction
                 currentPosition = ((traversedCount + position) - 14);
             } else
                 // Or just use normal position

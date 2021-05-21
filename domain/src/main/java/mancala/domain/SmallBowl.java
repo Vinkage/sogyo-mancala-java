@@ -36,7 +36,7 @@ public class SmallBowl implements Bowl {
             Bowl playEndedInThisBowl = new Recursive().flipFlopDistributeRock(this.myRocks, this.getNextBowl());
             this.myRocks = 0;
 
-            if (!(playEndedInThisBowl.getClass() == Kalaha.class&&playEndedInThisBowl.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe()))) {
+            if (!(playEndedInThisBowl.getClass() == Kalaha.class)) {
                 this.playerThatOwnsMe.switchTurn();
             }
 
@@ -48,6 +48,7 @@ public class SmallBowl implements Bowl {
                 if (playEndSmallBowl.getMyRocks() == 1&&opposite.getMyRocks() != 0) {
                     booty = opposite.getMyRocks();
                     booty++;
+                    System.out.println("Stealing booty " + booty);
                     this.myRocks = 0;
                     opposite.myRocks = 0;
                     this.getKalaha().acceptBooty(booty);
@@ -68,7 +69,7 @@ public class SmallBowl implements Bowl {
             i++;
             kalaha = kalaha.getNextBowl();
         }
-        return (SmallBowl) recursive.getNextSmallBowl(i-1, (SmallBowl) kalaha.getNextBowl());
+        return (SmallBowl) recursive.getNextSmallBowl(i, (SmallBowl) kalaha.getNextBowl());
     }
 
     public Kalaha getKalaha() {

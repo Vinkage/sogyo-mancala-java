@@ -2,6 +2,7 @@ package mancala.domain;
 
 public class Player {
     private boolean hasTheTurn;
+    private boolean isTheWinner = false;
     private Player opponent;
 
     public Player() {
@@ -33,5 +34,9 @@ public class Player {
             this.hasTheTurn = true;
             this.opponent.hasTheTurn = false;
         }
+    }
+
+    public boolean won() {
+        return this.isTheWinner;
     }
 }

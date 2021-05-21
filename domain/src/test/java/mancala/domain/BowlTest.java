@@ -90,7 +90,6 @@ class BowlTest {
                     neighbour = neighbour.getNextBowl();
                 }
             }
-
         }
 
         @Nested
@@ -125,6 +124,37 @@ class BowlTest {
                 firstSmallBowlPlayer.play();
                 assertTrue(firstSmallBowlPlayer.getPlayerThatOwnsMe().hasTheTurn());
                 assertEquals(5, firstSmallBowlPlayer.getNextBowl().getMyRocks());
+            }
+
+            @Test
+            public void all_bowls_of_the_player_are_empty_When_a_play_ends_Then_tell_players_who_won() {
+                Player player = firstSmallBowlPlayer.getPlayerThatOwnsMe();
+                Player opponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6).getPlayerThatOwnsMe();
+                endGame();
+                // assertTrue(player.won() || opponent.won());
+            }
+
+            private void endGame() {
+                // I could end the game in 9 moves (total of both player moves) on paper, not sure if it is optimal but tried to steal a lot
+                SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6);
+
+                // player
+                // Best opening
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(2).play();
+                // Set up for steal move
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(4).play();
+                assertEquals(2, firstSmallBowlPlayer.getKalaha().getMyRocks());
+
+                // opponent
+                // ... worst opening?
+                firstSmallBowlOpponent.play();
+
+                // player
+                firstSmallBowlPlayer.play();
+                assertEquals(9, firstSmallBowlPlayer.getKalaha().getMyRocks());
+                // Check if i did it on paper correctly
+
+
             }
 
             private SmallBowl goToSkippableState() {

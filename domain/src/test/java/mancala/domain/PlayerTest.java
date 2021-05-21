@@ -32,4 +32,15 @@ class PlayerTest {
         assertFalse(player.hasTheTurn());
         assertTrue(player.getOpponent().hasTheTurn());
     }
+
+    @Test
+    public void knows_when_it_is_the_winner() {
+        assertFalse(player.won());
+        player.isTheWinner();
+        assertTrue(player.won());
+        assertFalse(opponent.won());
+        opponent.isTheWinner();
+        assertTrue(opponent.won());
+        assertFalse(player.won());
+    }
 }

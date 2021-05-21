@@ -156,16 +156,28 @@ public class SmallBowl implements Bowl {
     private void endTheGame() {
         int playerRocks = 0;
         int opponentRocks = 0;
-        SmallBowl current = this;
+        int playerKalaha = 0;
+        int opponentKalaha = 0;
+        Bowl current = this;
         for (int i = 0; i < 14; i++) {
-            if (current.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe()))
-                playerRocks = playerRocks + current.getMyRocks();
-            else
-                opponentRocks = opponentRocks + current.getMyRocks();
+            if (current.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe())) {
+                if (current.getClass() == Kalaha.class)
+                    playerKalaha = playerKalaha + current.getMyRocks();
+                else
+                    playerRocks = playerRocks + current.getMyRocks();
+            } else {
+                if (current.getClass() == Kalaha.class)
+                    opponentKalaha = opponentKalaha + current.getMyRocks();
+                else
+                    opponentRocks = opponentRocks + current.getMyRocks();
+            }
+            current = current.getNextBowl();
         }
 
-        if (playerRocks == this.getKalaha().getMyRocks()) {
-            if (playerRocks > opponentRocks) {
+
+        if (playerRocks == 0) {
+            System.out.println("Final score:\n\t ending player: " + (playerRocks + playerKalaha) + "\n\t his opponent: " + (opponentRocks + opponentKalaha));
+            if ((playerRocks + playerKalaha) > (opponentRocks + opponentKalaha)) {
                 this.getPlayerThatOwnsMe().isTheWinner();
             } else
                 this.getPlayerThatOwnsMe().getOpponent().isTheWinner();

@@ -62,15 +62,15 @@ class BowlTest {
 
         @ParameterizedTest
         @ValueSource(ints = {1,2,3,4,5,6,8,9,10,11,12,13})
-        public void given_always_when_created_it_exists_in_a_mancala_board(int position) {
+        public void GIVEN_always_WHEN_created_THEN_it_exists_in_a_mancala_board(int position) {
             traverseAndCheckBoard(new SmallBowl(position), position);
             traverseAndCheckBoard(new SmallBowl(), 1);
         }
 
         @Nested
-        class given_its_the_start_of_the_game {
+        class GIVEN_its_the_start_of_the_game {
             @Test
-            public void When_created_Then_has_four_rocks() {
+            public void WHEN_before_any_small_bowls_are_played_THEN_has_four_rocks() {
                 Bowl current = firstSmallBowlPlayer;
                 for (int i = 0; i < 14; i++) {
                     current = current.getNextBowl();
@@ -81,7 +81,7 @@ class BowlTest {
             }
 
             @Test
-            public void When_chosen_by_the_player_that_has_the_turn_Then_distribute_its_rocks_anti_clockwise() {
+            public void WHEN_chosen_by_the_player_that_has_the_turn_THEN_distribute_its_rocks_anti_clockwise() {
                 int initialRocks = firstSmallBowlPlayer.getMyRocks();
                 firstSmallBowlPlayer.play();
                 Bowl neighbour = firstSmallBowlPlayer.getNextBowl();
@@ -93,10 +93,10 @@ class BowlTest {
         }
 
         @Nested
-        class given_the_game_is_in_a_state_where {
+        class GIVEN_the_game_is_in_a_state_where {
 
             @Test
-            public void its_not_the_players_turn_When_played_by_the_player_Then_nothing_happens() {
+            public void its_not_the_players_turn_WHEN_played_by_the_player_THEN_nothing_happens() {
                 firstSmallBowlPlayer.getPlayerThatOwnsMe().switchTurn();
                 int initialRocks = firstSmallBowlPlayer.getMyRocks();
                 firstSmallBowlPlayer.play();
@@ -108,7 +108,7 @@ class BowlTest {
             }
 
             @Test
-            public void play_can_reach_opponents_kalaha_When_player_plays_Then_opponents_kalaha_is_skipped() {
+            public void play_can_reach_opponents_kalaha_WHEN_played_by_the_player_THEN_opponents_kalaha_is_skipped() {
                 SmallBowl playWillSkipFromThisBowl = goToSkippableState();
                 int opponentKalahaRocksBefore = firstSmallBowlPlayer.getNextSmallBowlRepeat(6).getKalaha().getMyRocks();
                 playWillSkipFromThisBowl.play();
@@ -117,7 +117,7 @@ class BowlTest {
             }
 
             @Test
-            public void the_bowl_is_empty_When_player_plays_the_bowl_Then_nothing_happens() {
+            public void the_bowl_is_empty_WHEN_the_player_plays_the_empty_bowl_THEN_nothing_happens() {
                 firstSmallBowlPlayer.play();
                 firstSmallBowlPlayer.getPlayerThatOwnsMe().switchTurn();
                 assertTrue(firstSmallBowlPlayer.getPlayerThatOwnsMe().hasTheTurn());
@@ -127,7 +127,7 @@ class BowlTest {
             }
 
             @Test
-            public void all_bowls_of_the_player_are_empty_When_a_play_ends_Then_tell_players_who_won() {
+            public void all_small_bowls_of_the_player_are_empty_WHEN_a_play_ends_THEN_tell_players_who_won() {
                 Player player = firstSmallBowlPlayer.getPlayerThatOwnsMe();
                 Player opponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6).getPlayerThatOwnsMe();
                 assertFalse(player.won());
@@ -135,6 +135,53 @@ class BowlTest {
                 goToEndOfSillyGame();
                 assertTrue(player.won());
                 assertFalse(opponent.won());
+
+            }
+
+            @Test
+            public void all_small_bowls_of_the_player_are_empty_WHEN_a_play_ends_THEN_tell_players_who_wonOPPONENTVARIATION() {
+                Player player = firstSmallBowlPlayer.getPlayerThatOwnsMe();
+                Player opponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6).getPlayerThatOwnsMe();
+                goToEndOfGameWhereOpponentWins();
+                assertFalse(player.won());
+                assertTrue(opponent.won());
+            }
+
+            private void goToEndOfGameWhereOpponentWins() {
+                SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6);
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(1).play();
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(2).play();
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(5).play();
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(1).play();
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(1).play();
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(2).play();
+                firstSmallBowlOpponent.play();
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(3).play();
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(1).play();
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(4).play();
+                firstSmallBowlOpponent.play();
+                // Cheating here, let player go again >:), i'm too dumb too make a loop/skip and steal play happen in fair game
+                firstSmallBowlOpponent.getPlayerThatOwnsMe().switchTurn();
+                // Should skip and steal
+                // this bowls rocks
+                assertEquals(10, firstSmallBowlOpponent.getNextSmallBowlRepeat(3).getMyRocks());
+                // End up here by looping around the board, thus skipping
+                assertEquals(0, firstSmallBowlOpponent.getMyRocks());
+                // Thus steal from last bowl on players side
+                assertEquals(8, firstSmallBowlPlayer.getNextSmallBowlRepeat(5).getMyRocks());
+                // Result is big kalaha booty
+                assertEquals(8, firstSmallBowlOpponent.getKalaha().getMyRocks());
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(3).play();
+                assertEquals(19, firstSmallBowlOpponent.getKalaha().getMyRocks());
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(1).play();
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(1).play();
+                firstSmallBowlPlayer.play();
+                firstSmallBowlPlayer.getPlayerThatOwnsMe().switchTurn();
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(3).play();
+                firstSmallBowlPlayer.getPlayerThatOwnsMe().switchTurn();
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(4).play();
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(5).play();
+                assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlRepeat(5).getMyRocks());
             }
 
             private void goToEndOfSillyGame() {
@@ -214,28 +261,28 @@ class BowlTest {
         }
 
         @Nested
-        class given_the_play_ends{
+        class GIVEN_the_play_ends{
 
             @Test
-            public void in_own_kalaha_When_player_plays_this_bowl_Then_turn_is_not_switched() {
+            public void in_own_kalaha_WHEN_play_ends_THEN_turn_is_not_switched() {
                 firstSmallBowlPlayer.getNextSmallBowlRepeat(2).play();
                 assertTrue(firstSmallBowlPlayer.getPlayerThatOwnsMe().hasTheTurn());
             }
 
             @Test
-            public void in_own_small_bowl_When_player_plays_this_bowl_Then_turn_is_switched() {
+            public void in_own_small_bowl_WHEN_play_ends_THEN_turn_is_switched() {
                 firstSmallBowlPlayer.play();
                 assertFalse(firstSmallBowlPlayer.getPlayerThatOwnsMe().hasTheTurn());
             }
 
             @Test
-            public void in_opponents_small_bowl_When_player_plays_this_bowl_Then_turn_is_switched() {
+            public void in_opponents_small_bowl_WHEN_player_plays_this_bowl_THEN_turn_is_switched() {
                 firstSmallBowlPlayer.getNextSmallBowlRepeat(5).play();
                 assertFalse(firstSmallBowlPlayer.getPlayerThatOwnsMe().hasTheTurn());
             }
 
             @Test
-            public void in_own_empty_small_bowl_and_opposite_has_rocks_When_player_plays_this_bowl_Then_opposite_and_rock_are_added_to_kalaha() {
+            public void in_own_empty_small_bowl_and_opposite_has_rocks_WHEN_play_ends_THEN_rocks_of_opposite_plus_last_rock_of_play_are_added_to_kalaha() {
                 firstSmallBowlPlayer.getNextSmallBowlRepeat(5).play();
                 SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6);
                 firstSmallBowlOpponent.getNextSmallBowlRepeat(5).play();

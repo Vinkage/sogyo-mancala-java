@@ -33,7 +33,7 @@ public class SmallBowl implements Bowl {
     public void play() {
         if ((!this.playerThatOwnsMe.hasTheTurn()) || (this.myRocks == 0));
         else {
-            Bowl playEndedInThisBowl = new RecursiveFlipFlop().distributeAntiClockWise(this.myRocks, this.getNextBowl());
+            Bowl playEndedInThisBowl = new Recursive().flipFlopDistributeRock(this.myRocks, this.getNextBowl());
             this.myRocks = 0;
 
             if (!(playEndedInThisBowl.getClass() == Kalaha.class&&playEndedInThisBowl.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe()))) {
@@ -62,13 +62,13 @@ public class SmallBowl implements Bowl {
 
     public SmallBowl getOpposite() {
         Bowl kalaha = this.getNextBowl();
-        RecursiveFlipFlop recursiveFlipFlop = new RecursiveFlipFlop();
+        Recursive recursive = new Recursive();
         int i = 0;
         while (kalaha.getClass() != Kalaha.class) {
             i++;
             kalaha = kalaha.getNextBowl();
         }
-        return (SmallBowl) recursiveFlipFlop.getNextSmallBowl(i-1, (SmallBowl) kalaha.getNextBowl());
+        return (SmallBowl) recursive.getNextSmallBowl(i-1, (SmallBowl) kalaha.getNextBowl());
     }
 
     public Kalaha getKalaha() {
@@ -89,8 +89,8 @@ public class SmallBowl implements Bowl {
     }
 
     public SmallBowl getNextSmallBowlRepeat(int i) {
-        RecursiveFlipFlop recursiveFlipFlop = new RecursiveFlipFlop();
-        return recursiveFlipFlop.getNextSmallBowl(i, this);
+        Recursive recursive = new Recursive();
+        return recursive.getNextSmallBowl(i, this);
     }
 
     @Override
@@ -101,9 +101,9 @@ public class SmallBowl implements Bowl {
     private Bowl takeOneAndContinue(int remainingRocks) {
         this.myRocks++;
         if (remainingRocks == 1)
-            return new RecursiveFlipFlop().distributeAntiClockWise(--remainingRocks, this);
+            return new Recursive().flipFlopDistributeRock(--remainingRocks, this);
         else
-            return new RecursiveFlipFlop().distributeAntiClockWise(--remainingRocks, this.getNextBowl());
+            return new Recursive().flipFlopDistributeRock(--remainingRocks, this.getNextBowl());
     }
 
     // Recurses through board positions until connected again to startBowl
@@ -126,13 +126,13 @@ public class SmallBowl implements Bowl {
             this.nextBowl = null;
     }
 
-    class RecursiveFlipFlop {
-        Bowl distributeAntiClockWise(int remainingRocks, Bowl currentBowl) {
+    class Recursive {
+        Bowl flipFlopDistributeRock(int remainingRocks, Bowl currentBowl) {
             if (remainingRocks == 0)
                 return currentBowl;
             else if (currentBowl.getClass() == Kalaha.class) {
                 Kalaha tmpKalaha = (Kalaha) currentBowl;
-                return tmpKalaha.new RecursiveFlipFlop().distributeAntiClockWise(remainingRocks, tmpKalaha);
+                return tmpKalaha.new Recursive().flipFlopDistributeRock(remainingRocks, tmpKalaha);
             } else {
                 SmallBowl tmpSmallBowl = (SmallBowl) currentBowl;
                 return tmpSmallBowl.takeOneAndContinue(remainingRocks);

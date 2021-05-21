@@ -44,20 +44,20 @@ class Kalaha implements Bowl {
     private Bowl takeOneAndContinue(int remainingRocks) {
         this.myRocks++;
         if (remainingRocks == 1)
-            return new RecursiveFlipFlop().distributeAntiClockWise(--remainingRocks, this);
+            return new Recursive().flipFlopDistributeRock(--remainingRocks, this);
         else {
             SmallBowl smallBowl = (SmallBowl) this.getNextBowl();
-            return smallBowl.new RecursiveFlipFlop().distributeAntiClockWise(--remainingRocks, smallBowl);
+            return smallBowl.new Recursive().flipFlopDistributeRock(--remainingRocks, smallBowl);
         }
     }
 
-    class RecursiveFlipFlop {
-        Bowl distributeAntiClockWise(int remainingRocks,  Kalaha currentBowl) {
+    class Recursive {
+        Bowl flipFlopDistributeRock(int remainingRocks, Kalaha currentBowl) {
             if (remainingRocks == 0)
                 return currentBowl;
             else if (!(Kalaha.this.getPlayerThatOwnsMe().hasTheTurn())) {
                 SmallBowl smallBowl = (SmallBowl) currentBowl.getNextBowl();
-                return smallBowl.new RecursiveFlipFlop().distributeAntiClockWise(remainingRocks, smallBowl);
+                return smallBowl.new Recursive().flipFlopDistributeRock(remainingRocks, smallBowl);
             } else {
                 return takeOneAndContinue(remainingRocks);
             }

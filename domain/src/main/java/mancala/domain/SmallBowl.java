@@ -33,6 +33,7 @@ public class SmallBowl implements Bowl {
     public void play() {
         if ((!this.playerThatOwnsMe.hasTheTurn()) || (this.myRocks == 0));
         else {
+
             Bowl playEndedInThisBowl = new Recursive().flipFlopDistributeRock(this.myRocks, this.getNextBowl());
             this.myRocks = 0;
 
@@ -40,24 +41,9 @@ public class SmallBowl implements Bowl {
                 this.playerThatOwnsMe.switchTurn();
             }
 
-            if (playEndedInThisBowl.getClass() == SmallBowl.class&&playEndedInThisBowl.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe())) {
+            stealTheBooty(playEndedInThisBowl);
 
-                SmallBowl playEndSmallBowl = (SmallBowl) playEndedInThisBowl;
-                SmallBowl opposite = playEndSmallBowl.getOpposite();
-                int booty;
-                if (playEndSmallBowl.getMyRocks() == 1&&opposite.getMyRocks() != 0) {
-                    booty = opposite.getMyRocks();
-                    booty++;
-                    System.out.println("Stealing booty " + booty);
-                    playEndSmallBowl.myRocks = 0;
-                    opposite.myRocks = 0;
-                    this.getKalaha().acceptBooty(booty);
-                }
-            }
-
-            // TODO everyting empty?
-
-            // TODO player rocks greater?
+            endTheGame();
         }
     }
 
@@ -97,14 +83,6 @@ public class SmallBowl implements Bowl {
     @Override
     public Player getPlayerThatOwnsMe() {
         return playerThatOwnsMe;
-    }
-
-    private Bowl takeOneAndContinue(int remainingRocks) {
-        this.myRocks++;
-        if (remainingRocks == 1)
-            return new Recursive().flipFlopDistributeRock(--remainingRocks, this);
-        else
-            return new Recursive().flipFlopDistributeRock(--remainingRocks, this.getNextBowl());
     }
 
     // Recurses through board positions until connected again to startBowl
@@ -148,6 +126,49 @@ public class SmallBowl implements Bowl {
             else
                 return (SmallBowl) currentBowl;
 
+        }
+    }
+
+    private Bowl takeOneAndContinue(int remainingRocks) {
+        this.myRocks++;
+        if (remainingRocks == 1)
+            return new Recursive().flipFlopDistributeRock(--remainingRocks, this);
+        else
+            return new Recursive().flipFlopDistributeRock(--remainingRocks, this.getNextBowl());
+    }
+
+    private void stealTheBooty(Bowl playEndedInThisBowl) {
+        if (playEndedInThisBowl.getClass() == SmallBowl.class&&playEndedInThisBowl.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe())) {
+
+            SmallBowl playEndSmallBowl = (SmallBowl) playEndedInThisBowl;
+            SmallBowl opposite = playEndSmallBowl.getOpposite();
+            int booty;
+            if (playEndSmallBowl.getMyRocks() == 1&&opposite.getMyRocks() != 0) {
+                booty = opposite.getMyRocks();
+                booty++;
+                playEndSmallBowl.myRocks = 0;
+                opposite.myRocks = 0;
+                this.getKalaha().acceptBooty(booty);
+            }
+        }
+    }
+
+    private void endTheGame() {
+        int playerRocks = 0;
+        int opponentRocks = 0;
+        SmallBowl current = this;
+        for (int i = 0; i < 14; i++) {
+            if (current.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe()))
+                playerRocks = playerRocks + current.getMyRocks();
+            else
+                opponentRocks = opponentRocks + current.getMyRocks();
+        }
+
+        if (playerRocks == this.getKalaha().getMyRocks()) {
+            if (playerRocks > opponentRocks) {
+                this.getPlayerThatOwnsMe().isTheWinner();
+            } else
+                this.getPlayerThatOwnsMe().getOpponent().isTheWinner();
         }
     }
 }

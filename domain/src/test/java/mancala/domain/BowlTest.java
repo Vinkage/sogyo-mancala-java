@@ -130,11 +130,14 @@ class BowlTest {
             public void all_bowls_of_the_player_are_empty_When_a_play_ends_Then_tell_players_who_won() {
                 Player player = firstSmallBowlPlayer.getPlayerThatOwnsMe();
                 Player opponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6).getPlayerThatOwnsMe();
-                endGame();
-                // assertTrue(player.won() || opponent.won());
+                assertFalse(player.won());
+                assertFalse(opponent.won());
+                goToEndOfSillyGame();
+                assertTrue(player.won());
+                assertFalse(opponent.won());
             }
 
-            private void endGame() {
+            private void goToEndOfSillyGame() {
                 SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6);
 
                 // player
@@ -153,23 +156,39 @@ class BowlTest {
                 // Check if i did it properly on paper
                 assertEquals(9, firstSmallBowlPlayer.getKalaha().getMyRocks());
                 assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlRepeat(4).getMyRocks());
+                assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlRepeat(4).getOpposite().getMyRocks());
 
                 // opponent
                 firstSmallBowlOpponent.getNextSmallBowlRepeat(3).play();
 
                 //Player
-                firstSmallBowlPlayer.getNextSmallBowlRepeat(1).play();
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(3).play();
+                assertEquals(10, firstSmallBowlPlayer.getKalaha().getMyRocks());
 
-                // opponent steals back
+                // opponent makes stupid move again
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(1).play();
+
+                // player makes big steal
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(2).play();
+                assertEquals(19, firstSmallBowlPlayer.getKalaha().getMyRocks());
+
+                // opponent steals tiny booty
                 firstSmallBowlOpponent.play();
-                // assertEquals(3, firstSmallBowlOpponent.getKalaha().getMyRocks());
+                assertEquals(3, firstSmallBowlOpponent.getKalaha().getMyRocks());
 
-                // Player steals 6
+                // player is stalling until the end
+                firstSmallBowlPlayer.play();
 
-
-
-
-
+                // opponent is heading for disaster
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(5).play();
+                firstSmallBowlPlayer.play();
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(4).play();
+                firstSmallBowlPlayer.play();
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(5).play();
+                // everything empty!
+                for (int i = 0; i < 6; i++) {
+                    assertEquals(0, firstSmallBowlOpponent.getNextSmallBowlRepeat(i).getMyRocks());
+                }
 
             }
 

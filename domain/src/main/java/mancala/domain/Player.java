@@ -2,8 +2,8 @@ package mancala.domain;
 
 public class Player {
     private boolean hasTheTurn;
-    private boolean isTheWinner = false;
-    private Player opponent;
+    private boolean isTheWinner;
+    final private Player opponent;
 
     public Player() {
         // player has the turn when created
@@ -34,6 +34,11 @@ public class Player {
             this.hasTheTurn = true;
             this.opponent.hasTheTurn = false;
         }
+    }
+
+    void isTheWinner() {
+        this.isTheWinner = true;
+        this.opponent.isTheWinner = false;
     }
 
     public boolean won() {

@@ -135,7 +135,6 @@ class BowlTest {
             }
 
             private void endGame() {
-                // I could end the game in 9 moves (total of both player moves) on paper, not sure if it is optimal but tried to steal a lot
                 SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlRepeat(6);
 
                 // player
@@ -151,8 +150,25 @@ class BowlTest {
 
                 // player
                 firstSmallBowlPlayer.play();
+                // Check if i did it properly on paper
                 assertEquals(9, firstSmallBowlPlayer.getKalaha().getMyRocks());
-                // Check if i did it on paper correctly
+                assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlRepeat(4).getMyRocks());
+
+                // opponent
+                firstSmallBowlOpponent.getNextSmallBowlRepeat(3).play();
+
+                //Player
+                firstSmallBowlPlayer.getNextSmallBowlRepeat(1).play();
+
+                // opponent steals back
+                firstSmallBowlOpponent.play();
+                // assertEquals(3, firstSmallBowlOpponent.getKalaha().getMyRocks());
+
+                // Player steals 6
+
+
+
+
 
 
             }

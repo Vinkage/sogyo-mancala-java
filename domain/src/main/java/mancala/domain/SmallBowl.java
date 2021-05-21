@@ -40,7 +40,7 @@ public class SmallBowl implements Bowl {
                 this.playerThatOwnsMe.switchTurn();
             }
 
-            if (playEndedInThisBowl.getClass() == SmallBowl.class) {
+            if (playEndedInThisBowl.getClass() == SmallBowl.class&&playEndedInThisBowl.getPlayerThatOwnsMe().equals(this.getPlayerThatOwnsMe())) {
 
                 SmallBowl playEndSmallBowl = (SmallBowl) playEndedInThisBowl;
                 SmallBowl opposite = playEndSmallBowl.getOpposite();
@@ -49,7 +49,7 @@ public class SmallBowl implements Bowl {
                     booty = opposite.getMyRocks();
                     booty++;
                     System.out.println("Stealing booty " + booty);
-                    this.myRocks = 0;
+                    playEndSmallBowl.myRocks = 0;
                     opposite.myRocks = 0;
                     this.getKalaha().acceptBooty(booty);
                 }

@@ -44,4 +44,10 @@ public class Player {
     public boolean won() {
         return this.isTheWinner;
     }
+
+    void gotADraw() {
+        this.isTheWinner = true;
+        this.opponent.isTheWinner = true;
+    }
+
 }

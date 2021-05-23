@@ -6,23 +6,21 @@ class Kalaha implements Bowl {
     private final Bowl nextBowl;
 
     public Kalaha() {
+        // constructs board by recursively calling either kalaha or smallbowl constructors
         this.myRocks = 0;
         this.playerThatOwnsMe = new Player();
-        this.nextBowl = new SmallBowl(14, 1, this, this.playerThatOwnsMe.getOpponent());
+        int boardSize = 14;
+
+        this.nextBowl = new SmallBowl(boardSize, --boardSize, this, this.getPlayerThatOwnsMe().getOpponent());
     }
 
-    Kalaha(int startPosition, int addedBowlsCount, Bowl startBowl, Player playerOwningThisSide) {
+    Kalaha(int boardSize, int remainingBowls, Bowl startBowl, Player playerOwningThisSide) {
         this.myRocks = 0;
         this.playerThatOwnsMe = playerOwningThisSide;
-
-        int boardPosition = Bowl.calculateBoardPosition(startPosition, addedBowlsCount);
-
-        if (!(boardPosition == 7 || boardPosition == 14)) {
-            this.nextBowl = null;
-        } else if (addedBowlsCount == 13)
+        if (remainingBowls == 1) {
             this.nextBowl = startBowl;
-        else {
-            this.nextBowl = new SmallBowl(startPosition, ++addedBowlsCount, startBowl, playerOwningThisSide.getOpponent());
+        } else {
+            this.nextBowl = new SmallBowl(boardSize, --remainingBowls, startBowl, playerOwningThisSide.getOpponent());
         }
     }
 
@@ -41,31 +39,21 @@ class Kalaha implements Bowl {
         return this.playerThatOwnsMe;
     }
 
-    private Bowl takeOneAndContinue(int remainingRocks) {
+    @Override
+    public Bowl distribute(int remainingRocks) {
         this.myRocks++;
-        if (remainingRocks == 1)
-            return new Recursive().flipFlopDistributeRock(--remainingRocks, this);
-        else {
-            SmallBowl smallBowl = (SmallBowl) this.getNextBowl();
-            return smallBowl.new Recursive().flipFlopDistributeRock(--remainingRocks, smallBowl);
-        }
-    }
-
-    class Recursive {
-        Bowl flipFlopDistributeRock(int remainingRocks, Kalaha currentBowl) {
-            if (remainingRocks == 0)
-                return currentBowl;
-            else if (!(Kalaha.this.getPlayerThatOwnsMe().hasTheTurn())) {
-                SmallBowl smallBowl = (SmallBowl) currentBowl.getNextBowl();
-                return smallBowl.new Recursive().flipFlopDistributeRock(remainingRocks, smallBowl);
-            } else {
-                return takeOneAndContinue(remainingRocks);
-            }
-
-        }
+        // Skip?
+        if (!getPlayerThatOwnsMe().hasTheTurn()) {
+            this.myRocks--;
+            return getNextBowl().distribute(remainingRocks);
+        } // last ?
+        else if (remainingRocks == 1)
+            return this;
+        else
+            return getNextBowl().distribute(--remainingRocks);
     }
 
     void acceptBooty(int booty) {
-        this.myRocks = this.myRocks + booty;
+        myRocks = myRocks + booty;
     }
 }

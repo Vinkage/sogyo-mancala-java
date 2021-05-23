@@ -1,23 +1,11 @@
 package mancala.domain;
 
-// Your test class should be in the same 
-// package as the class you're testing.
-// Usually the test directory mirrors the
-// main directory 1:1. So for each class in src/main,
-// there is a class in src/test.
-
-// Import our test dependencies. We import the Test-attribute
-// and a set of assertions.
-
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 class BowlTest {
-    // Define a test starting with @Test. The test is like
-    // a small main method - you need to setup everything
-    // and you can write any arbitrary Java code in it.
 
     protected void traverseAndCheckBoard(Bowl currentBowl, int position) {
         Bowl initialBowl = currentBowl;
@@ -28,7 +16,7 @@ class BowlTest {
                 // if looping around the board, position = ((start+traversed) - total)
                 // in other words the amount of bowls that the absolute position is greater than the board's total bowls
                 //
-                // Only relevant during construction
+                // Only relevant to check construction btw, also only checking in the case where there are 14 bowls
                 currentPosition = ((traversedCount + position) - 14);
             } else
                 // Or just use normal position

@@ -181,7 +181,6 @@ class BowlTest {
                 firstSmallBowlPlayer.getPlayerThatOwnsMe().switchTurn();
                 firstSmallBowlPlayer.getNextSmallBowlRepeat(4).play();
                 firstSmallBowlPlayer.getNextSmallBowlRepeat(5).play();
-                assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlRepeat(5).getMyRocks());
             }
 
             private void goToEndOfSillyGame() {

@@ -22,13 +22,13 @@ public class SmallBowl implements Bowl {
         this.playerThatOwnsMe = playerOwningThisSide;
 
         boolean startingFromKalaha = startBowl.getClass() == Kalaha.class;
-        int startingFromKalahAdjustment = 0;
+        int startingFromKalahaAdjustment = 0;
         if (startingFromKalaha)
-            startingFromKalahAdjustment = -1;
+            startingFromKalahaAdjustment = -1;
 
         if (remainingBowls == 1) {
             this.nextBowl = startBowl;
-        } else if (remainingBowls == boardSize / 2 + 2 + startingFromKalahAdjustment || (remainingBowls == 2 && !startingFromKalaha)) {
+        } else if (remainingBowls == boardSize / 2 + 2 + startingFromKalahaAdjustment || (remainingBowls == 2 && !startingFromKalaha)) {
             this.nextBowl = new Kalaha(boardSize, --remainingBowls, startBowl, playerOwningThisSide);
         } else {
             this.nextBowl = new SmallBowl(boardSize, --remainingBowls, startBowl, playerOwningThisSide);

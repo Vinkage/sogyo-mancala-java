@@ -37,7 +37,7 @@ public class SmallBowl implements Bowl {
 
     @Override
     public int getMyRocks() {
-        return this.myRocks;
+        return myRocks;
     }
 
     @Override
@@ -50,69 +50,62 @@ public class SmallBowl implements Bowl {
         return playerThatOwnsMe;
     }
 
-    @Override
-    public Bowl distribute(int remainingRocks) {
+    public SmallBowl getNextSmallBowlTimes(int remainingTimes) {
+        if (remainingTimes == 0)
+            return this;
+        else {
+            return getNextSmallBowl().getNextSmallBowlTimes(--remainingTimes);
+        }
+    }
+
+    public void play() {
+        if ((!playerThatOwnsMe.hasTheTurn()) || (myRocks == 0));
+        else {
+            // Distribute rocks one by one
+            Bowl lastToReceiveRock;
+            if (getNextBowl().getClass() == Kalaha.class)
+                lastToReceiveRock = getKalaha().distribute(myRocks);
+            else
+                lastToReceiveRock = getNextSmallBowl().distribute(myRocks);
+            myRocks = 0;
+
+            // Did play end in smallbowl of my player?
+            if (lastToReceiveRock.getClass() == SmallBowl.class && lastToReceiveRock.getPlayerThatOwnsMe().equals(getPlayerThatOwnsMe())) {
+                stealTheBooty((SmallBowl) lastToReceiveRock);
+            }
+
+            // Did play end in Kalaha? otherwise switch turn
+            if (!(lastToReceiveRock.getClass() == Kalaha.class)) {
+                getPlayerThatOwnsMe().switchTurn();
+            }
+
+            // Should a player when? otherwise do nothing
+            endTheGame();
+        }
+    }
+
+    Bowl distribute(int remainingRocks) {
         this.myRocks++;
         // last?
         if (remainingRocks == 1)
             return this;
-        else
-            return this.getNextBowl().distribute(--remainingRocks);
-    }
-
-    public void play() {
-        if ((!this.playerThatOwnsMe.hasTheTurn()) || (this.myRocks == 0));
         else {
-
-            Bowl lastToReceiveRock = getNextBowl().distribute(myRocks);
-            myRocks = 0;
-
-            if (lastToReceiveRock.getClass() == SmallBowl.class && lastToReceiveRock.getPlayerThatOwnsMe().equals(getPlayerThatOwnsMe())) {
-                stealTheBooty(lastToReceiveRock);
-            }
-
-            if (!(lastToReceiveRock.getClass() == Kalaha.class)) {
-                this.playerThatOwnsMe.switchTurn();
-            }
-
-            endTheGame();
-
+            if (getNextBowl().getClass() == SmallBowl.class)
+                return getNextSmallBowl().distribute(--remainingRocks);
+            else
+                return getKalaha().distribute(--remainingRocks);
         }
     }
 
-    SmallBowl getOpposite() {
-        SmallBowl opponentFirst = (SmallBowl) getKalaha().getNextBowl();
-        return opponentFirst.getNextSmallBowlTimes(countSmallBowlsUntilKalahaFromHere());
-    }
-
-
-    Kalaha getKalaha() {
-        if (!(getNextBowl().getClass() == Kalaha.class)) {
-            SmallBowl notKalaha = (SmallBowl) getNextBowl();
-            return notKalaha.getKalaha();
-        } else
-            return (Kalaha) getNextBowl();
-    }
-
-    public SmallBowl getNextSmallBowlTimes(int remainingNexts) {
-        if (remainingNexts == 0)
-            return this;
-        else {
-            SmallBowl next = getNextSmallBowl();
-            return next.getNextSmallBowlTimes(--remainingNexts);
-        }
-    }
-
-    private void stealTheBooty(Bowl playEndedInThisBowl) {
-            SmallBowl playEndSmallBowl = (SmallBowl) playEndedInThisBowl;
-            SmallBowl opposite = playEndSmallBowl.getOpposite();
+    private void stealTheBooty(SmallBowl thievingBowl) {
+            SmallBowl victim = thievingBowl.getOpposite();
             int booty;
-            if (playEndSmallBowl.getMyRocks() == 1&&opposite.getMyRocks() != 0) {
-                booty = opposite.getMyRocks();
+            if (thievingBowl.getMyRocks() == 1 && victim.getMyRocks() != 0) {
+                booty = victim.getMyRocks();
                 booty++;
-                playEndSmallBowl.myRocks = 0;
-                opposite.myRocks = 0;
-                getKalaha().acceptBooty(booty);
+                thievingBowl.myRocks = 0;
+                victim.myRocks = 0;
+                getKalaha().claimStolenBooty(booty);
             }
     }
 
@@ -120,13 +113,14 @@ public class SmallBowl implements Bowl {
         SmallBowl firstBowlPlayer = (SmallBowl) getOpposite().getKalaha().getNextBowl();
         int playerRocks = firstBowlPlayer.countRocksTillDifferentPlayer();
 
-        SmallBowl firstBowlOpponent = (SmallBowl) getKalaha().getNextBowl();
-        int opponentRocks = firstBowlOpponent.countRocksTillDifferentPlayer();
-
-        int playerKalaha = getKalaha().getMyRocks();
-        int opponentKalaha = getOpposite().getKalaha().getMyRocks();
-
         if (playerRocks == 0) {
+
+            SmallBowl firstBowlOpponent = (SmallBowl) getKalaha().getNextBowl();
+            int opponentRocks = firstBowlOpponent.countRocksTillDifferentPlayer();
+
+            int playerKalaha = getKalaha().getMyRocks();
+            int opponentKalaha = getOpposite().getKalaha().getMyRocks();
+
             if ((playerRocks + playerKalaha) == (opponentRocks + opponentKalaha))
                 getPlayerThatOwnsMe().gotADraw();
             else if ((playerRocks + playerKalaha) > (opponentRocks + opponentKalaha))
@@ -137,10 +131,10 @@ public class SmallBowl implements Bowl {
     }
 
     private int countRocksTillDifferentPlayer() {
-        if (getNextSmallBowl().getPlayerThatOwnsMe().equals(getPlayerThatOwnsMe()))
-            return this.myRocks + getNextSmallBowl().countRocksTillDifferentPlayer();
-        else
+        if (!(getNextSmallBowl().getPlayerThatOwnsMe().equals(getPlayerThatOwnsMe())))
             return this.myRocks;
+        else
+            return this.myRocks + getNextSmallBowl().countRocksTillDifferentPlayer();
     }
 
     private SmallBowl getNextSmallBowl() {
@@ -155,5 +149,18 @@ public class SmallBowl implements Bowl {
             return 0;
         else
             return 1 + getNextSmallBowl().countSmallBowlsUntilKalahaFromHere();
+    }
+
+    // Deze package private methoden worden nog in de tests gebruikt
+    private SmallBowl getOpposite() {
+        SmallBowl opponentFirst = (SmallBowl) getKalaha().getNextBowl();
+        return opponentFirst.getNextSmallBowlTimes(countSmallBowlsUntilKalahaFromHere());
+    }
+
+    private Kalaha getKalaha() {
+        if (!(getNextBowl().getClass() == Kalaha.class)) {
+            return getNextSmallBowl().getKalaha();
+        } else
+            return (Kalaha) getNextBowl();
     }
 }

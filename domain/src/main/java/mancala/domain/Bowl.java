@@ -7,6 +7,4 @@ interface Bowl {
     Bowl getNextBowl();
 
     Player getPlayerThatOwnsMe();
-
-    Bowl distribute(int remainingRocks);
 }

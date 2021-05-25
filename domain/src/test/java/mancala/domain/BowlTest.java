@@ -46,13 +46,6 @@ class BowlTest {
             traverseAndCheckBoard(firstSmallBowlPlayer, 1);
         }
 
-        // @ParameterizedTest
-        // @ValueSource(ints = {1,2,3,4,5,6,8,9,10,11,12,13})
-        // public void GIVEN_always_WHEN_created_THEN_it_exists_in_a_mancala_board(int position) {
-        //     traverseAndCheckBoard(new SmallBowl(position), position);
-        //     traverseAndCheckBoard(new SmallBowl(), 1);
-        // }
-
         @Nested
         class GIVEN_its_the_start_of_the_game {
             @Test
@@ -75,6 +68,7 @@ class BowlTest {
                     assertEquals(5, neighbour.getMyRocks());
                     neighbour = neighbour.getNextBowl();
                 }
+                assertEquals(4, neighbour.getMyRocks());
             }
         }
 
@@ -91,6 +85,7 @@ class BowlTest {
                     assertEquals(4, neighbour.getMyRocks());
                     neighbour = neighbour.getNextBowl();
                 }
+                assertEquals(4, neighbour.getMyRocks());
             }
 
             @Test

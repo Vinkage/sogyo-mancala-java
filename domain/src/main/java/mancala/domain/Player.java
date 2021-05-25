@@ -36,13 +36,13 @@ public class Player {
         }
     }
 
+    public boolean won() {
+        return this.isTheWinner;
+    }
+
     void isTheWinner() {
         this.isTheWinner = true;
         this.opponent.isTheWinner = false;
-    }
-
-    public boolean won() {
-        return this.isTheWinner;
     }
 
     void gotADraw() {

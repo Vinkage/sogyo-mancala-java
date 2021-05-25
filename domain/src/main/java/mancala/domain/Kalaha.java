@@ -6,8 +6,8 @@ class Kalaha implements Bowl {
     private final Bowl nextBowl;
 
     public Kalaha() {
-        // constructs board by recursively calling either kalaha or smallbowl constructors
         this.myRocks = 0;
+
         this.playerThatOwnsMe = new Player();
         int boardSize = 14;
 
@@ -17,9 +17,12 @@ class Kalaha implements Bowl {
     Kalaha(int boardSize, int remainingBowls, Bowl startBowl, Player playerOwningThisSide) {
         this.myRocks = 0;
         this.playerThatOwnsMe = playerOwningThisSide;
+
+        // one more connection to make?
         if (remainingBowls == 1) {
             this.nextBowl = startBowl;
-        } else {
+        }
+        else {
             this.nextBowl = new SmallBowl(boardSize, --remainingBowls, startBowl, playerOwningThisSide.getOpponent());
         }
     }
@@ -41,12 +44,12 @@ class Kalaha implements Bowl {
 
     Bowl distribute(int remainingRocks) {
         myRocks++;
-        // Skip?
         SmallBowl next = (SmallBowl) getNextBowl();
+        // Skip?
         if (!getPlayerThatOwnsMe().hasTheTurn()) {
             myRocks--;
             return next.distribute(remainingRocks);
-        } // last ?
+        }
         else if (remainingRocks == 1)
             return this;
         else

@@ -6,7 +6,6 @@ public class Player {
     final private Player opponent;
 
     public Player() {
-        // player has the turn when created
         this.hasTheTurn = true;
 
         this.opponent = new Player(this);

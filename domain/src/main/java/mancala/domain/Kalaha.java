@@ -26,25 +26,25 @@ class Kalaha implements Bowl {
 
     @Override
     public int getMyRocks() {
-        return this.myRocks;
+        return myRocks;
     }
 
     @Override
     public Bowl getNextBowl() {
-        return this.nextBowl;
+        return nextBowl;
     }
 
     @Override
     public Player getPlayerThatOwnsMe() {
-        return this.playerThatOwnsMe;
+        return playerThatOwnsMe;
     }
 
     Bowl distribute(int remainingRocks) {
-        this.myRocks++;
+        myRocks++;
         // Skip?
         SmallBowl next = (SmallBowl) getNextBowl();
         if (!getPlayerThatOwnsMe().hasTheTurn()) {
-            this.myRocks--;
+            myRocks--;
             return next.distribute(remainingRocks);
         } // last ?
         else if (remainingRocks == 1)

@@ -151,7 +151,6 @@ public class SmallBowl implements Bowl {
             return 1 + getNextSmallBowl().countSmallBowlsUntilKalahaFromHere();
     }
 
-    // Deze package private methoden worden nog in de tests gebruikt
     private SmallBowl getOpposite() {
         SmallBowl opponentFirst = (SmallBowl) getKalaha().getNextBowl();
         return opponentFirst.getNextSmallBowlTimes(countSmallBowlsUntilKalahaFromHere());

@@ -133,7 +133,16 @@ class BowlTest {
                 assertTrue(opponent.won());
             }
 
-            private void goToEndOfGameWhereOpponentWins() {
+            @Test
+            public void the_play_would_skip_past_opponent_kalaha_at_the_last_rock_and_steal_WHEN_played_THEN_should_skip_and_steal_correctly() {
+                goToSkipAndStealOnLast();
+                SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlTimes(6);
+                assertEquals(3, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                firstSmallBowlOpponent.getNextSmallBowlTimes(3).play();
+                assertEquals(19, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+            }
+
+            private void goToSkipAndStealOnLast() {
                 SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlTimes(6);
                 firstSmallBowlPlayer.getNextSmallBowlTimes(1).play();
                 firstSmallBowlOpponent.getNextSmallBowlTimes(2).play();
@@ -157,9 +166,12 @@ class BowlTest {
                 assertEquals(8, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getMyRocks());
                 // Result is big kalaha booty
                 assertEquals(8, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
-                assertEquals(3, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+            }
+
+            private void goToEndOfGameWhereOpponentWins() {
+                goToSkipAndStealOnLast();
+                SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlTimes(6);
                 firstSmallBowlOpponent.getNextSmallBowlTimes(3).play();
-                assertEquals(19, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
                 firstSmallBowlPlayer.getNextSmallBowlTimes(1).play();
                 firstSmallBowlOpponent.getNextSmallBowlTimes(1).play();
                 firstSmallBowlPlayer.play();
@@ -306,12 +318,5 @@ class BowlTest {
                     assertEquals(current.getMyRocks(), 0);
             }
         }
-    }
-
-
-    @Nested
-    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-    class in_a_game_of_mancala {
-
     }
 }

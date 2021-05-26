@@ -102,15 +102,15 @@ public class SmallBowl implements Bowl {
     }
 
     private void stealTheBooty(SmallBowl thievingBowl) {
-            SmallBowl victim = thievingBowl.getOpposite();
-            int booty;
-            if (thievingBowl.getMyRocks() == 1 && victim.getMyRocks() != 0) {
-                booty = victim.getMyRocks();
-                booty++;
-                thievingBowl.myRocks = 0;
-                victim.myRocks = 0;
-                getNextKalaha().claimStolenBooty(booty);
-            }
+        SmallBowl victim = thievingBowl.getOpposite();
+        int booty;
+        if (thievingBowl.getMyRocks() == 1 && victim.getMyRocks() != 0) {
+            booty = victim.getMyRocks();
+            booty++;
+            thievingBowl.myRocks = 0;
+            victim.myRocks = 0;
+            getNextKalaha().claimStolenBooty(booty);
+        }
     }
 
     private void endTheGame() {

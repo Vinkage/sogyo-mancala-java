@@ -32,8 +32,7 @@ public class SmallBowl implements Bowl {
         } // Where are the Kalahas?
         else if (remainingBowls == boardSize / 2 + 2 + startingFromKalahaAdjustment || (remainingBowls == 2 && !startingFromKalaha)) {
             this.nextBowl = new Kalaha(boardSize, --remainingBowls, startBowl, playerOwningThisSide);
-        }
-        else {
+        } else {
             this.nextBowl = new SmallBowl(boardSize, --remainingBowls, startBowl, playerOwningThisSide);
         }
     }
@@ -62,16 +61,17 @@ public class SmallBowl implements Bowl {
     }
 
     public void play() {
-        if ((!playerThatOwnsMe.hasTheTurn()) || (myRocks == 0));
+        if ((!playerThatOwnsMe.hasTheTurn()) || (myRocks == 0)) ;
         else {
 
             Bowl lastToReceiveRock;
+            int myRocksBefore = myRocks;
             // Which distribute method do we need?
             if (getNextBowl().getClass() == Kalaha.class)
                 lastToReceiveRock = getNextKalaha().distribute(myRocks);
             else
                 lastToReceiveRock = getNextSmallBowl().distribute(myRocks);
-            myRocks = 0;
+            myRocks = (myRocksBefore - myRocks);
 
             // Did play end in smallbowl of my player? steal, otherwise do nothing
             if (lastToReceiveRock.getClass() == SmallBowl.class && lastToReceiveRock.getPlayerThatOwnsMe().equals(getPlayerThatOwnsMe())) {

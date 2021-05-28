@@ -50,10 +50,11 @@ class Kalaha implements Bowl {
             myRocks--;
             return next.distribute(remainingRocks);
         }
-        else if (remainingRocks == 1)
+        else if (remainingRocks == 1) {
             return this;
-        else
+        } else {
             return next.distribute(--remainingRocks);
+        }
     }
 
     void claimStolenBooty(int booty) {

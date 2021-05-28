@@ -13,6 +13,13 @@ public class SmallBowl extends Bowl {
     }
 
     public SmallBowl(int boardSize) {
+        try {
+            if (boardSize < 4) {
+                throw new Exception("Can't have a board smaller than four bowls.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.myRocks = 4;
         this.myOwner = new Player();
         int bowlsToAdd = boardSize - 1;

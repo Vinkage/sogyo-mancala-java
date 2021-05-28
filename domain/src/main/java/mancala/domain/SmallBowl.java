@@ -71,7 +71,7 @@ public class SmallBowl implements Bowl {
                 lastToReceiveRock = getNextKalaha().distribute(myRocks);
             else
                 lastToReceiveRock = getNextSmallBowl().distribute(myRocks);
-            myRocks = (myRocksBefore - myRocks);
+            myRocks = (myRocks - myRocksBefore);
 
             // Did play end in smallbowl of my player? steal, otherwise do nothing
             if (lastToReceiveRock.getClass() == SmallBowl.class && lastToReceiveRock.getPlayerThatOwnsMe().equals(getPlayerThatOwnsMe())) {

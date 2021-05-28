@@ -6,5 +6,5 @@ interface Bowl {
 
     Bowl getNextBowl();
 
-    Player getPlayerThatOwnsMe();
+    Player getMyOwner();
 }

@@ -11,7 +11,7 @@ class Kalaha implements Bowl {
         this.playerThatOwnsMe = new Player();
         int boardSize = 14;
 
-        this.nextBowl = new SmallBowl(boardSize, --boardSize, this, this.getPlayerThatOwnsMe().getOpponent());
+        this.nextBowl = new SmallBowl(boardSize, --boardSize, this, this.getMyOwner().getOpponent());
     }
 
     Kalaha(int boardSize, int remainingBowls, Bowl startBowl, Player playerOwningThisSide) {
@@ -38,7 +38,7 @@ class Kalaha implements Bowl {
     }
 
     @Override
-    public Player getPlayerThatOwnsMe() {
+    public Player getMyOwner() {
         return playerThatOwnsMe;
     }
 
@@ -46,7 +46,7 @@ class Kalaha implements Bowl {
         myRocks++;
         SmallBowl next = (SmallBowl) getNextBowl();
         // Skip?
-        if (!getPlayerThatOwnsMe().hasTheTurn()) {
+        if (!getMyOwner().hasTheTurn()) {
             myRocks--;
             return next.distribute(remainingRocks);
         }

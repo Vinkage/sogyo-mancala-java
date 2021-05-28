@@ -2,21 +2,21 @@ package mancala.domain;
 
 public class SmallBowl implements Bowl {
     private int myRocks;
-    private final Player playerThatOwnsMe;
+    private final Player myOwner;
     private final Bowl nextBowl;
 
     public SmallBowl() {
         this.myRocks = 4;
 
-        this.playerThatOwnsMe = new Player();
+        this.myOwner = new Player();
         int boardSize = 14;
 
-        this.nextBowl = new SmallBowl(boardSize, --boardSize, this, this.getPlayerThatOwnsMe());
+        this.nextBowl = new SmallBowl(boardSize, --boardSize, this, this.getMyOwner());
     }
 
     SmallBowl(int boardSize, int remainingBowls, Bowl startBowl, Player playerOwningThisSide) {
         this.myRocks = 4;
-        this.playerThatOwnsMe = playerOwningThisSide;
+        this.myOwner = playerOwningThisSide;
 
         boolean startingFromKalaha = startBowl.getClass() == Kalaha.class;
         int startingFromKalahaAdjustment = 0;
@@ -45,8 +45,8 @@ public class SmallBowl implements Bowl {
     }
 
     @Override
-    public Player getPlayerThatOwnsMe() {
-        return playerThatOwnsMe;
+    public Player getMyOwner() {
+        return myOwner;
     }
 
     public SmallBowl getNextSmallBowlTimes(int remainingTimes) {
@@ -58,7 +58,7 @@ public class SmallBowl implements Bowl {
     }
 
     public void play() {
-        if ((!playerThatOwnsMe.hasTheTurn())) return;
+        if ((!myOwner.hasTheTurn())) return;
         if (myRocks == 0) return;
 
         Bowl lastToReceiveRock;
@@ -72,13 +72,13 @@ public class SmallBowl implements Bowl {
         myRocks = (myRocks - myRocksBefore);
 
         // Did play end in smallbowl of my player? steal, otherwise do nothing
-        if (lastToReceiveRock.getClass() == SmallBowl.class && lastToReceiveRock.getPlayerThatOwnsMe().equals(getPlayerThatOwnsMe())) {
+        if (lastToReceiveRock.getClass() == SmallBowl.class && lastToReceiveRock.getMyOwner().equals(getMyOwner())) {
             stealTheBooty((SmallBowl) lastToReceiveRock);
         }
 
         // Did play end in Kalaha? do nothing, otherwise switch turn
         if (!(lastToReceiveRock.getClass() == Kalaha.class)) {
-            getPlayerThatOwnsMe().switchTurn();
+            getMyOwner().switchTurn();
         }
 
         // Should a player win or is it a draw? tell player he won/ drew, otherwise do nothing
@@ -124,11 +124,11 @@ public class SmallBowl implements Bowl {
         int opponentKalaha = getOpposite().getNextKalaha().getMyRocks();
 
         if ((playerRocks + playerKalaha) == (opponentRocks + opponentKalaha)) {
-            getPlayerThatOwnsMe().gotADraw();
+            getMyOwner().gotADraw();
         } else if ((playerRocks + playerKalaha) > (opponentRocks + opponentKalaha)) {
-            getPlayerThatOwnsMe().isTheWinner();
+            getMyOwner().isTheWinner();
         } else {
-            getPlayerThatOwnsMe().getOpponent().isTheWinner();
+            getMyOwner().getOpponent().isTheWinner();
         }
     }
 
@@ -162,7 +162,7 @@ public class SmallBowl implements Bowl {
     }
 
     private int countRocksInSmallBowlsUntilOpponentBowls() {
-        if (!(getNextSmallBowl().getPlayerThatOwnsMe().equals(getPlayerThatOwnsMe()))) {
+        if (!(getNextSmallBowl().getMyOwner().equals(getMyOwner()))) {
             return this.myRocks;
         } else {
             return this.myRocks + getNextSmallBowl().countRocksInSmallBowlsUntilOpponentBowls();

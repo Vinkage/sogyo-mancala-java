@@ -1,61 +1,49 @@
 package mancala.domain;
 
-class Kalaha implements Bowl {
-    private int myRocks;
-    private final Player playerThatOwnsMe;
-    private final Bowl nextBowl;
+class Kalaha extends Bowl {
+    Kalaha(int boardSize, int bowlsToAdd, Bowl startBowl, Player playerOwningThisSide) {
+        bowlsToAdd = bowlsToAdd - 1;
 
-    public Kalaha() {
         this.myRocks = 0;
+        this.myOwner = playerOwningThisSide;
 
-        this.playerThatOwnsMe = new Player();
-        int boardSize = 14;
+        if (bowlsToAdd == 0) this.nextBowl = startBowl;
 
-        this.nextBowl = new SmallBowl(boardSize, --boardSize, this, this.getMyOwner().getOpponent());
+        else this.nextBowl = new SmallBowl(boardSize, bowlsToAdd, startBowl, playerOwningThisSide.getOpponent());
     }
 
-    Kalaha(int boardSize, int remainingBowls, Bowl startBowl, Player playerOwningThisSide) {
-        this.myRocks = 0;
-        this.playerThatOwnsMe = playerOwningThisSide;
-
-        // one more connection to make?
-        if (remainingBowls == 1) {
-            this.nextBowl = startBowl;
-        }
-        else {
-            this.nextBowl = new SmallBowl(boardSize, --remainingBowls, startBowl, playerOwningThisSide.getOpponent());
-        }
+    Kalaha getKalaha() {
+        return this;
     }
 
-    @Override
-    public int getMyRocks() {
-        return myRocks;
+    SmallBowl getSmallBowl() {
+        return getNextBowl().getSmallBowl();
     }
 
-    @Override
-    public Bowl getNextBowl() {
-        return nextBowl;
+    SmallBowl getOpposite(int countTillThis) {
+        return getNextBowl().getNextSmallBowlTimes(countTillThis - 1);
     }
 
-    @Override
-    public Player getMyOwner() {
-        return playerThatOwnsMe;
+    SmallBowl getNextSmallBowlTimes(int i) {
+        return getNextBowl().getNextSmallBowlTimes(i);
     }
 
-    Bowl distribute(int remainingRocks) {
+    void distribute(int remainingRocks) {
         myRocks++;
-        SmallBowl next = (SmallBowl) getNextBowl();
         // Skip?
-        if (!getMyOwner().hasTheTurn()) {
+        if (getMyOwner().hasTheTurn() == false) {
             myRocks--;
-            return next.distribute(remainingRocks);
-        }
-        else if (remainingRocks == 1) {
-            return this;
-        } else {
-            return next.distribute(--remainingRocks);
-        }
+            getNextBowl().distribute(remainingRocks);
+        } else if (remainingRocks == 1) {
+            endTheGame();
+        } else getNextBowl().distribute(--remainingRocks);
     }
+
+    @Override
+    boolean isEmpty() {
+        return true;
+    }
+
 
     void claimStolenBooty(int booty) {
         myRocks = myRocks + booty;

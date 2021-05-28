@@ -43,7 +43,7 @@ class BowlTest {
         @BeforeEach
         public void makeASmallBowlInMancala() {
             firstSmallBowlPlayer = new SmallBowl();
-            // traverseAndCheckBoard(firstSmallBowlPlayer, 1);
+            traverseAndCheckBoard(firstSmallBowlPlayer, 1);
         }
 
         @Nested
@@ -185,16 +185,17 @@ class BowlTest {
                 firstSmallBowlPlayer.getNextSmallBowlTimes(2).play();
                 // Set up for steal move
                 firstSmallBowlPlayer.getNextSmallBowlTimes(4).play();
-                assertEquals(2, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(2, firstSmallBowlPlayer.getKalaha().getMyRocks());
 
                 // opponent
                 // ... worst opening?
                 firstSmallBowlOpponent.play();
 
                 // player
+                assertSame(firstSmallBowlPlayer.getNextSmallBowlTimes(4).getOpposite(), firstSmallBowlPlayer.getKalaha().getNextBowl().getNextBowl());
                 firstSmallBowlPlayer.play();
                 // Check if i did it properly on paper
-                assertEquals(9, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(9, firstSmallBowlPlayer.getKalaha().getMyRocks());
                 assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(4).getMyRocks());
                 // assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(4).getOpposite().getMyRocks());
 
@@ -209,6 +210,8 @@ class BowlTest {
                 firstSmallBowlOpponent.getNextSmallBowlTimes(1).play();
 
                 // player makes big steal
+                //assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(10, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
                 firstSmallBowlPlayer.getNextSmallBowlTimes(2).play();
                 assertEquals(19, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
 
@@ -279,6 +282,8 @@ class BowlTest {
                 firstSmallBowlPlayer.getNextSmallBowlTimes(5).play();
                 SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlTimes(6);
                 firstSmallBowlOpponent.getNextSmallBowlTimes(5).play();
+                assertSame(firstSmallBowlPlayer.getNextSmallBowlTimes(1).getOpposite(), firstSmallBowlPlayer.getKalaha().getSmallBowl().getNextSmallBowlTimes(4));
+                // assertSame(firstSmallBowlPlayer.getOpposite(), firstSmallBowlPlayer.getKalaha().getNextSmallBowlTimes(5));
                 firstSmallBowlPlayer.play();
                 assertEquals(7, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
             }
@@ -292,16 +297,18 @@ class BowlTest {
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
     class a_kalaha {
 
+        SmallBowl smallBowl;
         Kalaha kalaha;
 
         @BeforeEach
         public void makeKalahaInBoard() {
-            kalaha = new Kalaha();
+            smallBowl = new SmallBowl();
+            kalaha = smallBowl.getNextSmallBowlTimes(6).getKalaha();
         }
 
         @Test
         public void exists_in_a_mancala_board() {
-            // traverseAndCheckBoard(kalaha, 14);
+            traverseAndCheckBoard(kalaha, 14);
         }
 
         @Test

@@ -18,7 +18,11 @@ public class MancalaImpl implements Mancala {
     private SmallBowl domainReference;
 
     public MancalaImpl() {
-        domainReference = new SmallBowl();
+        try {
+            domainReference = new SmallBowl();
+        } catch (DomainSmallBowlException e) {
+            e.printStackTrace();
+        }
         domainPlayer = domainReference.getMyOwner();
         domainOpponent = domainPlayer.getOpponent();
     }

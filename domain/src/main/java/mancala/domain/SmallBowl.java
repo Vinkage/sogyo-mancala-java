@@ -6,13 +6,14 @@ import java.util.stream.Collectors;
 
 public class SmallBowl extends Bowl {
 
-    public SmallBowl() {
-        this(
-                Arrays.stream(new int[] {4,4,4,4,4,4,0,4,4,4,4,4,4,0}).boxed().collect(Collectors.toList())
-        );
+    public SmallBowl() throws DomainSmallBowlException {
+        this(Arrays.stream(new int[] {4,4,4,4,4,4,0,4,4,4,4,4,4,0}).boxed().collect(Collectors.toList()));
     }
 
-    public SmallBowl(List<Integer> stonesList) {
+    public SmallBowl(List<Integer> stonesList) throws DomainSmallBowlException {
+        if (stonesList.size() % 2 != 0) {
+            throw new DomainSmallBowlException("Stones List should contain even number of elements.");
+        }
         this.myOwner = new Player();
 
         int boardSize = stonesList.size();

@@ -1,31 +1,33 @@
 package mancala.domain;
 
+import java.util.List;
+
 class Kalaha extends Bowl {
-    Kalaha(int boardSize, int bowlsToAdd, Bowl startBowl, Player playerOwningThisSide) {
+    Kalaha(int boardSize, int bowlsToAdd, List<Integer> stonesList, Bowl startBowl, Player playerOwningThisSide) {
         bowlsToAdd = bowlsToAdd - 1;
 
-        this.myRocks = 0;
+        this.myStones = stonesList.remove(0);
         this.myOwner = playerOwningThisSide;
 
         if (bowlsToAdd == 0) this.nextBowl = startBowl;
 
-        else this.nextBowl = new SmallBowl(boardSize, bowlsToAdd, startBowl, playerOwningThisSide.getOpponent());
+        else this.nextBowl = new SmallBowl(boardSize, bowlsToAdd, stonesList, startBowl, playerOwningThisSide.getOpponent());
     }
 
     Kalaha getKalaha() {
         return this;
     }
 
-    SmallBowl getSmallBowl() {
-        return getNextBowl().getSmallBowl();
+    SmallBowl getNextSmallBowl() {
+        return getNextBowl().getNextSmallBowl();
     }
 
     @Override
     SmallBowl goToFirstBowlOfPlayerWithTurn() {
         if (getMyOwner().hasTheTurn()) {
-            return getNextBowl().getKalaha().getSmallBowl();
+            return getNextBowl().getKalaha().getNextSmallBowl();
         } else {
-            return getSmallBowl();
+            return getNextSmallBowl();
         }
     }
 
@@ -38,10 +40,10 @@ class Kalaha extends Bowl {
     }
 
     void distribute(int remainingRocks) {
-        myRocks++;
+        myStones++;
         // Skip?
         if (getMyOwner().hasTheTurn() == false) {
-            myRocks--;
+            myStones--;
             getNextBowl().distribute(remainingRocks);
         } else if (remainingRocks == 1) {
             endTheGame();
@@ -55,6 +57,6 @@ class Kalaha extends Bowl {
 
 
     void claimStolenBooty(int booty) {
-        myRocks = myRocks + booty;
+        myStones = myStones + booty;
     }
 }

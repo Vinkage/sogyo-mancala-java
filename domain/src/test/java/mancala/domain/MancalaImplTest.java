@@ -173,13 +173,36 @@ class MancalaImplTest {
 
     @Nested
     class isEndOfGame {
+        @Test
         void given_the_game_is_not_ended_when_isEndOfGame_is_called_then_return_false() {
             assertFalse(mancala.isEndOfGame());
         }
+
+        @Test
+        void given_the_game_is_ended_when_isEndOfGame_is_called_then_return_true() {
+            assertTrue(mancala.isEndOfGame());
+        }
+
+
     }
 
     @Nested
     class getWinner {
+        @Test
+        void given_the_game_has_not_ended_when_getWinner_is_called_then_immediately_return_Mancala_NO_PLAYERS() {
+            assertEquals(Mancala.NO_PLAYERS, mancala.getWinner());
+        }
+
+        @Test
+        void given_PLAYER_ONE_has_won_in_the_domain_model_when_getWinner_is_called_then_return_Mancala_PLAYER_ONE() {
+            assertEquals(Mancala.PLAYER_ONE, mancala.getWinner());
+        }
+
+        @Test
+        void given_PLAYER_TWO_has_won_in_the_domain_model_when_getWinner_is_called_then_return_Mancala_PLAYER_TWO() {
+            assertEquals(Mancala.PLAYER_TWO, mancala.getWinner());
+        }
+
     }
 
     void assumeTurn(int player) {

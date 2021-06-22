@@ -6,19 +6,21 @@ import java.util.stream.IntStream;
 
 public class MancalaImpl implements Mancala {
 
-    public static HashSet<Integer> PLAYER_ONE_PITS = new HashSet<>(
+    public static final HashSet<Integer> PLAYER_ONE_PITS = new HashSet<>(
             IntStream.rangeClosed(0, 5).boxed().collect(Collectors.toList())
     );
-    public static HashSet<Integer> PLAYER_TWO_PITS = new HashSet<>(
+    public static final HashSet<Integer> PLAYER_TWO_PITS = new HashSet<>(
             IntStream.rangeClosed(7, 12).boxed().collect(Collectors.toList())
     );
-    public static int PLAYER_ONE_KALAHA = 6;
-    public static int PLAYER_TWO_KALAHA = 13;
+    public static final int PLAYER_ONE_KALAHA = 6;
+    public static final int PLAYER_TWO_KALAHA = 13;
 
     private SmallBowl domainReference;
 
     public MancalaImpl() {
         domainReference = new SmallBowl();
+        domainPlayer = domainReference.getMyOwner();
+        domainOpponent = domainPlayer.getOpponent();
     }
 
     @Override
@@ -75,13 +77,22 @@ public class MancalaImpl implements Mancala {
             return -1;
     }
 
-	@Override
+    private final mancala.domain.Player domainPlayer;
+    private final mancala.domain.Player domainOpponent;
+
+    @Override
 	public boolean isEndOfGame() {
-        return domainReference.endTheGame();
+        return domainPlayer.won() || domainOpponent.won();
     }
 
 	@Override
 	public int getWinner() {
-        return Mancala.NO_PLAYERS;
+        if (!isEndOfGame()) return Mancala.NO_PLAYERS;
+
+        if (domainPlayer.won()) return Mancala.PLAYER_ONE;
+        else if (domainOpponent.won()) return Mancala.PLAYER_TWO;
+        else if (domainPlayer.won() && domainOpponent.won()) return Mancala.BOTH_PLAYERS;
+        else return Mancala.NO_PLAYERS;
     }
+
 }

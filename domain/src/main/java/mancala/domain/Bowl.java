@@ -1,12 +1,12 @@
 package mancala.domain;
 
 abstract class Bowl {
-    protected int myRocks;
+    protected int myStones;
     protected Player myOwner;
     protected Bowl nextBowl;
 
     public int getMyStones() {
-        return myRocks;
+        return myStones;
     }
 
     public Bowl getNextBowl() {
@@ -25,19 +25,19 @@ abstract class Bowl {
 
     abstract Kalaha getKalaha();
 
-    abstract SmallBowl getSmallBowl();
+    abstract SmallBowl getNextSmallBowl();
 
     abstract SmallBowl goToFirstBowlOfPlayerWithTurn();
 
     abstract boolean isEmpty();
     // abstract SmallBowl getNextSmallBowl();
 
-    boolean endTheGame() {
-        return goToFirstBowlOfPlayerWithTurn().getNextBowl().endTheGame(goToFirstBowlOfPlayerWithTurn(), 0, 0);
+    void endTheGame() {
+        goToFirstBowlOfPlayerWithTurn().getNextBowl().endTheGame(goToFirstBowlOfPlayerWithTurn(), 0, 0);
     }
 
-    protected boolean endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
-        if (isEmpty() == false && getMyOwner().equals(startOfLoop.getMyOwner())) return false;
+    protected void endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
+        if (isEmpty() == false && getMyOwner().equals(startOfLoop.getMyOwner())) return;
 
         if (this.equals(startOfLoop)) {
 
@@ -48,8 +48,6 @@ abstract class Bowl {
                 if (scorePlayer == scoreOpponent) getMyOwner().gotADraw();
                 else if (scorePlayer > scoreOpponent) getMyOwner().isTheWinner();
                 else getMyOwner().getOpponent().isTheWinner();
-
-                return true;
             }
 
 
@@ -58,9 +56,8 @@ abstract class Bowl {
                 scorePlayer = scorePlayer + getMyStones();
             } else scoreOpponent = scoreOpponent + getMyStones();
 
-            return getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
+            getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
         }
-        return false;
     }
 
 

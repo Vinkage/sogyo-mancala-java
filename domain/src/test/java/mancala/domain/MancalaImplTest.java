@@ -2,6 +2,7 @@ package mancala.domain;
 
 import org.junit.jupiter.api.*;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,8 +129,33 @@ class MancalaImplTest {
             playPitAndFailIfNoException(7, "Didn't throw exception when Pit was empty when played!");
         }
 
+        @Test
+        void given_that_pit_has_stones_and_player_has_turn_when_playPit_is_called_then_return_array_representing_state() {
+            mancala = new MancalaImpl(new int[] {1,0,0,0,0,0,0,1,0,0,0,0,0,0});
+            assumeTurn(Mancala.PLAYER_ONE);
+            int[] stateArray = playPitAndFailIfNotValid(0);
+            assertEquals(15, stateArray.length,
+                    "length of the state array should be 15.");
+            assertTrue(Arrays.equals(new int[] {0,1,0,0,0,0,0,1,0,0,0,0,0,0,2}, stateArray));
+
+            stateArray = playPitAndFailIfNotValid(7);
+            assertEquals(15, stateArray.length,
+                    "length of the state array should be 15.");
+            assertTrue(Arrays.equals(new int[] {0,1,0,0,0,0,0,0,1,0,0,0,0,0,1}, stateArray));
+        }
+
     }
 
+    /**
+     * Method for returning the amount of stones in de specified pit. Index is as specified below:
+     *
+     *    12 11 10  9  8  7
+     * 13                    6
+     *     0  1  2  3  4  5
+     *
+     * @param index Index of the pit.
+     * @return Amount of stone.
+     */
     @Nested
     class getStonesForPit {
         @Test
@@ -171,21 +197,33 @@ class MancalaImplTest {
 
     }
 
+    /**
+     * Method for retrieving whether the game has ended or not.
+     *
+     * @return True is the game has ended otherwise False.
+     */
     @Nested
     class isEndOfGame {
         @Test
-        void given_the_game_is_not_ended_when_isEndOfGame_is_called_then_return_false() {
+        void given_the_game_has_not_ended_when_isEndOfGame_is_called_then_return_false() {
             assertFalse(mancala.isEndOfGame());
         }
 
         @Test
-        void given_the_game_is_ended_when_isEndOfGame_is_called_then_return_true() {
+        void given_the_game_has_ended_when_isEndOfGame_is_called_then_return_true() {
+            mancala = new MancalaImpl(new int[] {0,0,0,0,0,1,0,0,0,0,0,0,0,0});
+            playPitAndFailIfNotValid(5);
             assertTrue(mancala.isEndOfGame());
         }
 
 
     }
 
+    /**
+     * Method for retrieving the player that has won the game.
+     *
+     * @return Integer value representing which player(s) (if any) won the game.
+     */
     @Nested
     class getWinner {
         @Test
@@ -195,12 +233,27 @@ class MancalaImplTest {
 
         @Test
         void given_PLAYER_ONE_has_won_in_the_domain_model_when_getWinner_is_called_then_return_Mancala_PLAYER_ONE() {
+            mancala = new MancalaImpl(new int[] {0,0,0,0,0,1,0,0,0,0,0,0,0,0});
+            playPitAndFailIfNotValid(5);
             assertEquals(Mancala.PLAYER_ONE, mancala.getWinner());
         }
 
         @Test
         void given_PLAYER_TWO_has_won_in_the_domain_model_when_getWinner_is_called_then_return_Mancala_PLAYER_TWO() {
-            assertEquals(Mancala.PLAYER_TWO, mancala.getWinner());
+            mancala = new MancalaImpl(new int[] {0,1,0,0,0,0,0,0,0,0,0,2,0,0});
+            playPitAndFailIfNotValid(1);
+            playPitAndFailIfNotValid(7 + 4);
+            playPitAndFailIfNotValid(7 + 5);
+            assertEquals(Mancala.PLAYER_TWO, mancala.getWinner(),
+                    "PLAYER TWO should win here.");
+        }
+
+        @Test
+        void given_BOTH_PLAYER_have_won_in_the_domain_model_when_getWinner_is_called_then_return_Mancala_BOTH_PLAYERS() {
+            mancala = new MancalaImpl(new int[] {0,0,0,0,0,1,0,0,0,0,0,0,1,0});
+            playPitAndFailIfNotValid(5);
+            assertEquals(Mancala.BOTH_PLAYERS, mancala.getWinner(),
+                    "PLAYER TWO should win here.");
         }
 
     }
@@ -215,11 +268,12 @@ class MancalaImplTest {
                 "It's PLAYER " + (player == 1 ? "ONE's" : "TWO's") + " turn!");
     }
 
-    void playPitAndFailIfNotValid(int index) {
+    int[] playPitAndFailIfNotValid(int index) {
         try {
-            mancala.playPit(index);
+            return mancala.playPit(index);
         } catch (MancalaException e) {
             fail("Invalid play.");
+            return new int[0];
         }
     }
 

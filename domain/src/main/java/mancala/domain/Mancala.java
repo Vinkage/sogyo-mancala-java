@@ -24,7 +24,7 @@ public interface Mancala {
 	 * @param index Index of the recess to be played.
 	 * @return 15 item long Array with the current state of the game. The 15th item indicates which player has the next turn (possible values are 1 or 2).
 	 */
-	void playPit(int index) throws MancalaException;
+	int[] playPit(int index) throws MancalaException;
 	
 	/**
 	 * Method for returning the amount of stones in de specified pit. Index is as specified below:

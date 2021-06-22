@@ -62,4 +62,6 @@ abstract class Bowl {
 
 
     protected abstract String makeString(String playerBowls, String opponentBowls, String kalahas);
+
+    protected abstract int[] toStateArray(int[] stateArray, int index);
 }

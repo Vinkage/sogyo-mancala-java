@@ -143,6 +143,24 @@ class BowlTest {
             }
         }
 
+        @Test
+        void given_a_stones_list_with_less_than_four_elements_when_instantiating_small_bowl_then_throw_DomainSmallBowlException() {
+            int[] stonesArray = new int[] {1,2};
+            List<Integer> stonesList = Arrays.stream(stonesArray).boxed().collect(Collectors.toList());
+            try {
+                referenceSmallBowl = new SmallBowl(stonesList);
+                fail("No exception when stones list is too small");
+            } catch (DomainSmallBowlException e) {
+            }
+            stonesArray = new int[] {1,2,3,4};
+            stonesList = Arrays.stream(stonesArray).boxed().collect(Collectors.toList());
+            try {
+                referenceSmallBowl = new SmallBowl(stonesList);
+            } catch (DomainSmallBowlException e) {
+                fail("Should work fine");
+            }
+        }
+
         void setupGameSituationAndFailIfInvalid(int[] stonesArray) {
             try {
                 referenceSmallBowl = new SmallBowl(

@@ -73,4 +73,16 @@ class Kalaha extends Bowl {
     void claimStolenBooty(int booty) {
         myStones = myStones + booty;
     }
+
+    @Override
+    protected int[] toStateArray(int[] stateArray, int index) {
+        stateArray[index] = getMyStones();
+        if (index == stateArray.length - 2) {
+            stateArray[stateArray.length - 1] = (getMyOwner().hasTheTurn() ? Mancala.PLAYER_TWO : Mancala.PLAYER_ONE);
+            return stateArray;
+        } else {
+            return getNextBowl().toStateArray(stateArray, ++index);
+        }
+    }
+
 }

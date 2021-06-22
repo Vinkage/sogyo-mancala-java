@@ -1,5 +1,6 @@
 package mancala.domain;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,6 +28,19 @@ public class MancalaImpl implements Mancala {
         domainOpponent = domainPlayer.getOpponent();
     }
 
+    public MancalaImpl(int[] stonesArray) {
+        try {
+            domainReference = new SmallBowl(
+                    Arrays.stream(stonesArray)
+                    .boxed().collect(Collectors.toList())
+            );
+        } catch (DomainSmallBowlException e) {
+            e.printStackTrace();
+        }
+        domainPlayer = domainReference.getMyOwner();
+        domainOpponent = domainPlayer.getOpponent();
+    }
+
     @Override
     public boolean isPlayersTurn(int player) {
         switch (player) {
@@ -40,7 +54,7 @@ public class MancalaImpl implements Mancala {
     }
 
     @Override
-	public void playPit(int index) throws MancalaException {
+	public int[] playPit(int index) throws MancalaException {
         if (isPlayersTurn(Mancala.PLAYER_ONE) && MancalaImpl.PLAYER_TWO_PITS.contains(index)) {
             throw new MancalaException("Player one cannot play player two's pits.");
         }
@@ -61,6 +75,7 @@ public class MancalaImpl implements Mancala {
             domainReference.getNextSmallBowlTimes(skipKalahaIndex).play();
         }
 
+        return domainReference.toStateArray(new int[15], 0);
     }
 	
 	@Override
@@ -93,9 +108,9 @@ public class MancalaImpl implements Mancala {
 	public int getWinner() {
         if (!isEndOfGame()) return Mancala.NO_PLAYERS;
 
-        if (domainPlayer.won()) return Mancala.PLAYER_ONE;
+        if (domainPlayer.won() && domainOpponent.won()) return Mancala.BOTH_PLAYERS;
+        else if (domainPlayer.won()) return Mancala.PLAYER_ONE;
         else if (domainOpponent.won()) return Mancala.PLAYER_TWO;
-        else if (domainPlayer.won() && domainOpponent.won()) return Mancala.BOTH_PLAYERS;
         else return Mancala.NO_PLAYERS;
     }
 

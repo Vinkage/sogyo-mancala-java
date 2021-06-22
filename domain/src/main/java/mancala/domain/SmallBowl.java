@@ -17,6 +17,9 @@ public class SmallBowl extends Bowl {
         if (stonesList.size() % 2 != 0) {
             throw new DomainSmallBowlException("Stones List should contain even number of elements.");
         }
+        if (stonesList.size() < 4) {
+            throw new DomainSmallBowlException("Stones list should have length greater than or equal to 4.");
+        }
         this.myOwner = new Player();
 
         int boardSize = stonesList.size();
@@ -24,7 +27,9 @@ public class SmallBowl extends Bowl {
 
         this.myStones = stonesList.remove(0);
 
-        this.nextBowl = new SmallBowl(boardSize, bowlsToAdd, stonesList, this, this.getMyOwner());
+        if (boardSize == 4) this.nextBowl = new Kalaha(boardSize, bowlsToAdd, stonesList, this, this.getMyOwner());
+        else this.nextBowl = new SmallBowl(boardSize, bowlsToAdd, stonesList, this, this.getMyOwner());
+
         referencePoint = this;
     }
 
@@ -145,4 +150,13 @@ public class SmallBowl extends Bowl {
         }
     }
 
+    @Override
+    protected int[] toStateArray(int[] stateArray, int index) {
+        stateArray[index] = getMyStones();
+        if (index == stateArray.length - 2) {
+            return stateArray;
+        } else {
+            return getNextBowl().toStateArray(stateArray, ++index);
+        }
+    }
 }

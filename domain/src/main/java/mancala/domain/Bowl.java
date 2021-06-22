@@ -37,11 +37,7 @@ abstract class Bowl {
     }
 
     protected void endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
-        if (isEmpty() == false) return;
-
-        if (getMyOwner().equals(startOfLoop.getMyOwner())) {
-            scorePlayer = scorePlayer + getMyStones();
-        } else scoreOpponent = scoreOpponent + getMyStones();
+        if (isEmpty() == false && getMyOwner().equals(startOfLoop.getMyOwner())) return;
 
         if (this.equals(startOfLoop)) {
 
@@ -56,7 +52,13 @@ abstract class Bowl {
             }
 
 
-        } else getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
+        } else {
+            if (getMyOwner().equals(startOfLoop.getMyOwner())) {
+                scorePlayer = scorePlayer + getMyStones();
+            } else scoreOpponent = scoreOpponent + getMyStones();
+
+            getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
+        }
     }
 
 

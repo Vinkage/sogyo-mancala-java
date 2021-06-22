@@ -90,25 +90,13 @@ class BowlTest {
                     assertEquals(4, neighbour.getMyStones());
                 }
             }
-
-
-
-
-
-
         }
 
         @Nested
         class given_a_kalaha {
 
-            Kalaha playerKalaha;
-            Kalaha opponentKalaha;
-
-            @BeforeEach
-            public void makeKalahaInBoard() {
-                playerKalaha = referenceSmallBowl.getKalaha();
-                opponentKalaha = referenceSmallBowl.getKalaha().getNextSmallBowl().getKalaha();
-            }
+            Kalaha playerKalaha = referenceSmallBowl.getKalaha();
+            Kalaha opponentKalaha = referenceSmallBowl.getKalaha().getNextSmallBowl().getKalaha();
 
             @Test
             public void when_getMyStones_is_called_after_instantiating_then_has_zero_stones() {
@@ -155,23 +143,31 @@ class BowlTest {
             }
         }
 
-        @Test
-        public void given_stones_can_reach_oppenent_kalaha_when_played_validly_then_opponents_kalaha_is_skipped() {
-            try {
-                referenceSmallBowl = new SmallBowl(
-                        Arrays.stream(
-                                new int[] {0,0,0,0,0,100,0,0,0,0,0,0,0,0}
-                        ).boxed().collect(Collectors.toList())
-                );
-            } catch (DomainSmallBowlException e) {
-                fail("Invalid instantiation.");
-            }
-            referenceSmallBowl.getNextSmallBowlTimes(5).play();
-            assertEquals(0, referenceSmallBowl.getKalaha().getNextBowl().getKalaha().getMyStones());
-        }
-
         @Nested
-        class and_the_game_is_in_a_state_where {
+        class playBehaviour {
+
+            {
+                try {
+                    referenceSmallBowl = new SmallBowl();
+                } catch (DomainSmallBowlException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Test
+            public void given_stones_can_reach_oppenent_kalaha_when_played_validly_then_opponents_kalaha_is_skipped() {
+                try {
+                    referenceSmallBowl = new SmallBowl(
+                            Arrays.stream(
+                                    new int[] {0,0,0,0,0,100,0,0,0,0,0,0,0,0}
+                            ).boxed().collect(Collectors.toList())
+                    );
+                } catch (DomainSmallBowlException e) {
+                    fail("Invalid instantiation.");
+                }
+                referenceSmallBowl.getNextSmallBowlTimes(5).play();
+                assertEquals(0, referenceSmallBowl.getKalaha().getNextBowl().getKalaha().getMyStones());
+            }
 
             @Test
             public void its_not_the_players_turn_when_play_is_called_then_nothing_happens() {
@@ -185,6 +181,12 @@ class BowlTest {
                 }
                 assertEquals(4, neighbour.getMyStones());
             }
+
+        }
+
+
+        @Nested
+        class and_the_game_is_in_a_state_where {
 
             @Test
             public void the_bowl_is_empty_WHEN_the_player_plays_the_empty_bowl_THEN_nothing_happens() {

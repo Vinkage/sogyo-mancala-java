@@ -55,6 +55,20 @@ class Kalaha extends Bowl {
         return true;
     }
 
+    @Override
+    protected String makeString(String playerBowls, String opponentBowls, String kalahas) {
+        if (getMyOwner().equals(SmallBowl.referencePoint.getMyOwner().getOpponent())) {
+            return "  " + opponentBowls + "\n" +
+                    getMyStones() + "\t\t\t\t   " + kalahas + "\n" +
+                    "  " + playerBowls;
+        }
+        else {
+            return getNextBowl().makeString(
+                    playerBowls,
+                    opponentBowls,
+                    kalahas + getMyStones());
+        }
+    }
 
     void claimStolenBooty(int booty) {
         myStones = myStones + booty;

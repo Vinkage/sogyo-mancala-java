@@ -143,10 +143,24 @@ class BowlTest {
             }
         }
 
+        void setupGameSituationAndFailIfInvalid(int[] stonesArray) {
+            try {
+                referenceSmallBowl = new SmallBowl(
+                        Arrays.stream(
+                                stonesArray
+                        ).boxed().collect(Collectors.toList())
+                );
+            } catch (DomainSmallBowlException e) {
+                fail("Invalid instantiation.");
+            }
+        }
+
         @Nested
         class playBehaviour {
 
             {
+                // setup default game in this sub class
+                // by default
                 try {
                     referenceSmallBowl = new SmallBowl();
                 } catch (DomainSmallBowlException e) {
@@ -155,22 +169,14 @@ class BowlTest {
             }
 
             @Test
-            public void given_stones_can_reach_oppenent_kalaha_when_played_validly_then_opponents_kalaha_is_skipped() {
-                try {
-                    referenceSmallBowl = new SmallBowl(
-                            Arrays.stream(
-                                    new int[] {0,0,0,0,0,100,0,0,0,0,0,0,0,0}
-                            ).boxed().collect(Collectors.toList())
-                    );
-                } catch (DomainSmallBowlException e) {
-                    fail("Invalid instantiation.");
-                }
+            void given_stones_can_reach_oppenent_kalaha_when_played_validly_then_opponents_kalaha_is_skipped() {
+                setupGameSituationAndFailIfInvalid(new int[] {0,0,0,0,0,100,0,0,0,0,0,0,0,0});
                 referenceSmallBowl.getNextSmallBowlTimes(5).play();
                 assertEquals(0, referenceSmallBowl.getKalaha().getNextBowl().getKalaha().getMyStones());
             }
 
             @Test
-            public void its_not_the_players_turn_when_play_is_called_then_nothing_happens() {
+            void given_its_not_the_players_turn_when_play_is_called_then_nothing_happens() {
                 referenceSmallBowl.getMyOwner().switchTurn();
                 int initialRocks = referenceSmallBowl.getMyStones();
                 referenceSmallBowl.play();
@@ -182,14 +188,8 @@ class BowlTest {
                 assertEquals(4, neighbour.getMyStones());
             }
 
-        }
-
-
-        @Nested
-        class and_the_game_is_in_a_state_where {
-
             @Test
-            public void the_bowl_is_empty_WHEN_the_player_plays_the_empty_bowl_THEN_nothing_happens() {
+            void given_the_bowl_is_empty_when_play_called_on_the_bowl_then_nothing_happens() {
                 referenceSmallBowl.play();
                 referenceSmallBowl.getMyOwner().switchTurn();
                 assertTrue(referenceSmallBowl.getMyOwner().hasTheTurn());
@@ -199,168 +199,91 @@ class BowlTest {
             }
 
             @Test
-            public void all_small_bowls_of_the_player_are_empty_WHEN_a_play_ends_THEN_tell_players_who_won() {
-                Player player = referenceSmallBowl.getMyOwner();
-                Player opponent = referenceSmallBowl.getNextSmallBowlTimes(6).getMyOwner();
-                assertFalse(player.won());
-                assertFalse(opponent.won());
-                goToEndOfSillyGame();
-                assertTrue(player.won());
-                assertFalse(opponent.won());
+            void given_stones_would_skip_opponent_kalaha_at_the_last_rock_and_steal_when_played_then_should_skip_and_steal_correctly() {
+                setupGameSituationAndFailIfInvalid(new int[] {13,0,0,0,0,0,
+                                                            0,
+                                                                0,0,0,0,0,8,
+                                                            0});
+                System.out.println(referenceSmallBowl.getMyStones());
+                System.out.println(referenceSmallBowl.stateString());
+                referenceSmallBowl.play();
+                System.out.println(referenceSmallBowl.stateString());
 
+                assertEquals(11, referenceSmallBowl.getKalaha().getMyStones(),
+                        "resulting kalaha stones after stealing should be 11.");
+                assertEquals(0, referenceSmallBowl.getMyStones(),
+                        "played bowl should be zero, since steal happened");
+                assertEquals(0, referenceSmallBowl.getNextSmallBowlTimes(12).getMyStones());
             }
 
             @Test
-            public void all_small_bowls_of_the_player_are_empty_WHEN_a_play_ends_THEN_tell_players_who_wonOPPONENTVARIATION() {
-                Player player = referenceSmallBowl.getMyOwner();
-                Player opponent = referenceSmallBowl.getNextSmallBowlTimes(6).getMyOwner();
-                goToEndOfGameWhereOpponentWins();
-                assertFalse(player.won());
-                assertTrue(opponent.won());
-            }
-
-            @Test
-            public void the_play_would_skip_past_opponent_kalaha_at_the_last_rock_and_steal_WHEN_played_THEN_should_skip_and_steal_correctly() {
-                goToSkipAndStealOnLast();
-                SmallBowl firstSmallBowlOpponent = referenceSmallBowl.getNextSmallBowlTimes(6);
-                assertEquals(3, referenceSmallBowl.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
-                firstSmallBowlOpponent.getNextSmallBowlTimes(3).play();
-                assertEquals(19, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
-            }
-
-            private void goToSkipAndStealOnLast() {
-                SmallBowl firstSmallBowlOpponent = referenceSmallBowl.getNextSmallBowlTimes(6);
-                referenceSmallBowl.getNextSmallBowlTimes(1).play();
-                firstSmallBowlOpponent.getNextSmallBowlTimes(2).play();
-                firstSmallBowlOpponent.getNextSmallBowlTimes(5).play();
-                referenceSmallBowl.getNextSmallBowlTimes(1).play();
-                firstSmallBowlOpponent.getNextSmallBowlTimes(1).play();
-                referenceSmallBowl.getNextSmallBowlTimes(2).play();
-                firstSmallBowlOpponent.play();
-                referenceSmallBowl.getNextSmallBowlTimes(3).play();
-                firstSmallBowlOpponent.getNextSmallBowlTimes(1).play();
-                referenceSmallBowl.getNextSmallBowlTimes(4).play();
-                firstSmallBowlOpponent.play();
-                // Cheating here, let player go again >:), i'm too dumb too make a loop/skip and steal play happen in fair game
-                firstSmallBowlOpponent.getMyOwner().switchTurn();
-                // Should skip and steal
-                // this bowls rocks
-                assertEquals(10, firstSmallBowlOpponent.getNextSmallBowlTimes(3).getMyStones());
-                // End up here by looping around the board, thus skipping
-                assertEquals(0, firstSmallBowlOpponent.getMyStones());
-                // Thus steal from last bowl on players side
-                assertEquals(8, referenceSmallBowl.getNextSmallBowlTimes(5).getMyStones());
-                // Result is big kalaha booty
-                assertEquals(8, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
-            }
-
-            private void goToEndOfGameWhereOpponentWins() {
-                goToSkipAndStealOnLast();
-                SmallBowl firstSmallBowlOpponent = referenceSmallBowl.getNextSmallBowlTimes(6);
-                firstSmallBowlOpponent.getNextSmallBowlTimes(3).play();
-                referenceSmallBowl.getNextSmallBowlTimes(1).play();
-                firstSmallBowlOpponent.getNextSmallBowlTimes(1).play();
-                referenceSmallBowl.play();
-                referenceSmallBowl.getMyOwner().switchTurn();
-                referenceSmallBowl.getNextSmallBowlTimes(3).play();
-                referenceSmallBowl.getMyOwner().switchTurn();
-                referenceSmallBowl.getNextSmallBowlTimes(4).play();
-                referenceSmallBowl.getNextSmallBowlTimes(5).play();
-            }
-
-            private void goToEndOfSillyGame() {
-                SmallBowl firstSmallBowlOpponent = referenceSmallBowl.getNextSmallBowlTimes(6);
-
-                // player
-                // Best opening
-                referenceSmallBowl.getNextSmallBowlTimes(2).play();
-                // Set up for steal move
-                referenceSmallBowl.getNextSmallBowlTimes(4).play();
-                assertEquals(2, referenceSmallBowl.getKalaha().getMyStones());
-
-                // opponent
-                // ... worst opening?
-                firstSmallBowlOpponent.play();
-
-                // player
-                assertSame(referenceSmallBowl.getNextSmallBowlTimes(4).getOpposite(), referenceSmallBowl.getKalaha().getNextBowl().getNextBowl());
-                referenceSmallBowl.play();
-                // Check if i did it properly on paper
-                assertEquals(9, referenceSmallBowl.getKalaha().getMyStones());
-                assertEquals(0, referenceSmallBowl.getNextSmallBowlTimes(4).getMyStones());
-                // assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(4).getOpposite().getMyRocks());
-
-                // opponent
-                firstSmallBowlOpponent.getNextSmallBowlTimes(3).play();
-
-                //Player
-                referenceSmallBowl.getNextSmallBowlTimes(3).play();
-                assertEquals(10, referenceSmallBowl.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
-
-                // opponent makes stupid move again
-                firstSmallBowlOpponent.getNextSmallBowlTimes(1).play();
-
-                // player makes big steal
-                //assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
-                assertEquals(10, referenceSmallBowl.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
-                referenceSmallBowl.getNextSmallBowlTimes(2).play();
-                assertEquals(19, referenceSmallBowl.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
-
-                // opponent steals tiny booty
-                firstSmallBowlOpponent.play();
-                assertEquals(3, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
-
-                // player is stalling until the end
-                referenceSmallBowl.play();
-
-                // opponent is heading for disaster
-                firstSmallBowlOpponent.getNextSmallBowlTimes(5).play();
-                referenceSmallBowl.play();
-                firstSmallBowlOpponent.getNextSmallBowlTimes(4).play();
-                referenceSmallBowl.play();
-                firstSmallBowlOpponent.getNextSmallBowlTimes(5).play();
-                // everything empty!
-                for (int i = 0; i < 6; i++) {
-                    assertEquals(0, firstSmallBowlOpponent.getNextSmallBowlTimes(i).getMyStones());
-                }
-
-            }
-        }
-
-
-        @Nested
-        class GIVEN_the_play_ends{
-
-            @Test
-            public void in_own_kalaha_WHEN_play_ends_THEN_turn_is_not_switched() {
+            void given_that_play_ends_in_own_kalaha_when_play_is_called_validly_then_turn_is_not_switched() {
                 referenceSmallBowl.getNextSmallBowlTimes(2).play();
                 assertTrue(referenceSmallBowl.getMyOwner().hasTheTurn());
             }
 
             @Test
-            public void in_own_small_bowl_WHEN_play_ends_THEN_turn_is_switched() {
+            void given_that_play_ends_in_own_small_bowl_when_play_is_called_validly_then_turn_is_switched() {
                 referenceSmallBowl.play();
                 assertFalse(referenceSmallBowl.getMyOwner().hasTheTurn());
             }
 
             @Test
-            public void in_opponents_small_bowl_WHEN_player_plays_this_bowl_THEN_turn_is_switched() {
+            void given_that_play_ends_in_opponents_small_bowl_when_play_is_called_validly_then_turn_is_switched() {
                 referenceSmallBowl.getNextSmallBowlTimes(5).play();
                 assertFalse(referenceSmallBowl.getMyOwner().hasTheTurn());
             }
 
             @Test
-            public void in_own_empty_small_bowl_and_opposite_has_rocks_WHEN_play_ends_THEN_rocks_of_opposite_plus_last_rock_of_play_are_added_to_kalaha() {
+            void given_that_play_ends_in_own_empty_small_bowl_and_opposite_has_rocks_when_play_is_called_validly_then_rocks_of_opposite_plus_last_rock_of_play_are_added_to_next_kalaha() {
+                System.out.println(referenceSmallBowl.stateString());
                 referenceSmallBowl.getNextSmallBowlTimes(5).play();
+                System.out.println(referenceSmallBowl.stateString());
                 SmallBowl firstSmallBowlOpponent = referenceSmallBowl.getNextSmallBowlTimes(6);
                 firstSmallBowlOpponent.getNextSmallBowlTimes(5).play();
-                assertSame(referenceSmallBowl.getNextSmallBowlTimes(1).getOpposite(), referenceSmallBowl.getKalaha().getNextSmallBowl().getNextSmallBowlTimes(4));
-                // assertSame(firstSmallBowlPlayer.getOpposite(), firstSmallBowlPlayer.getKalaha().getNextSmallBowlTimes(5));
+                System.out.println(referenceSmallBowl.stateString());
                 referenceSmallBowl.play();
-                assertEquals(7, referenceSmallBowl.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
+                System.out.println(referenceSmallBowl.stateString());
+                assertEquals(7, referenceSmallBowl.getKalaha().getMyStones());
+                assertEquals(0, referenceSmallBowl.getNextSmallBowlTimes(5).getMyStones());
+                assertEquals(0, referenceSmallBowl.getKalaha().getNextBowl().getMyStones());
+            }
+        }
+
+        @Nested
+        class endGameBehaviour {
+
+            @Test
+            void given_all_small_bowls_of_the_player_are_empty_when_a_play_ends_then_tell_players_who_won() {
+                setupGameSituationAndFailIfInvalid(new int[] {0,0,0,0,0,1,0,4,4,4,4,4,4,0});
+                Player player = referenceSmallBowl.getMyOwner();
+                Player opponent = referenceSmallBowl.getNextSmallBowlTimes(6).getMyOwner();
+                assertFalse(player.won(), "players haven't won at start of game");
+                assertFalse(opponent.won(), "players haven't won at start of game");
+                referenceSmallBowl.getNextSmallBowlTimes(5).play();
+                assertFalse(player.won(), "player should lose here.");
+                assertTrue(opponent.won(), "opponent should win here.");
+
+                setupGameSituationAndFailIfInvalid(new int[] {4,4,4,4,4,4,0,0,0,0,0,0,1,0});
+                player = referenceSmallBowl.getMyOwner();
+                opponent = referenceSmallBowl.getNextSmallBowlTimes(6).getMyOwner();
+                assertFalse(player.won(), "players haven't won at start of game");
+                assertFalse(opponent.won(), "players haven't won at start of game");
+                player.switchTurn();
+                referenceSmallBowl.getNextSmallBowlTimes(6 + 5).play();
+                assertTrue(player.won(), "player should win here.");
+                assertFalse(opponent.won(), "opponent should lose here.");
+            }
+
+            @Test
+            void given_all_small_bowls_of_the_player_are_empty_and_score_is_tied_when_a_play_ends_then_tell_both_player_they_won() {
+                setupGameSituationAndFailIfInvalid(new int[] {0,0,0,0,0,1,0,0,0,0,0,0,1,0});
+                System.out.println(referenceSmallBowl.stateString());
+                referenceSmallBowl.getNextSmallBowlTimes(5).play();
+                System.out.println(referenceSmallBowl.stateString());
+                assertTrue(referenceSmallBowl.getMyOwner().won() && referenceSmallBowl.getMyOwner().getOpponent().won());
             }
 
         }
-
     }
 }

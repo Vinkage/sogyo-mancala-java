@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 
 public class SmallBowl extends Bowl {
 
+    public static SmallBowl referencePoint;
+
     public SmallBowl() throws DomainSmallBowlException {
         this(Arrays.stream(new int[] {4,4,4,4,4,4,0,4,4,4,4,4,4,0}).boxed().collect(Collectors.toList()));
+        referencePoint = this;
     }
 
     public SmallBowl(List<Integer> stonesList) throws DomainSmallBowlException {
@@ -22,7 +25,7 @@ public class SmallBowl extends Bowl {
         this.myStones = stonesList.remove(0);
 
         this.nextBowl = new SmallBowl(boardSize, bowlsToAdd, stonesList, this, this.getMyOwner());
-
+        referencePoint = this;
     }
 
     SmallBowl(int boardSize, int bowlsToAdd, List<Integer> stonesList, Bowl startBowl, Player playerOwningThisSide) {
@@ -76,9 +79,10 @@ public class SmallBowl extends Bowl {
         // Did play end in smallbowl of my player? steal, otherwise do nothing
         if (getMyOwner().hasTheTurn()) stealTheBooty(false);
 
+        endTheGame();
+
         getMyOwner().switchTurn();
 
-        endTheGame();
     }
 
     SmallBowl getNextSmallBowl() {
@@ -100,11 +104,13 @@ public class SmallBowl extends Bowl {
 
     private void stealTheBooty(boolean victim) {
         if (victim){
+            System.out.println("help! i'm being robbed, my precious " + getMyStones() + " stones are gone :(.");
             getOpposite().getKalaha().claimStolenBooty(myStones);
             myStones = 0;
 
         } else if (getMyStones() == 1 &&
                 getOpposite().getMyStones() != 0) {
+            System.out.println("stealing");
 
             getKalaha().claimStolenBooty(myStones);
             myStones = 0;
@@ -120,4 +126,23 @@ public class SmallBowl extends Bowl {
         count = count + 1;
         return getNextBowl().getOpposite(count);
     }
+
+    public String stateString() {
+        return SmallBowl.referencePoint.makeString("", "", "");
+    }
+
+    protected String makeString(String playerBowls, String opponentBowls, String kalahas) {
+        if (!this.getMyOwner().equals(SmallBowl.referencePoint.getMyOwner())) {
+            return getNextBowl().makeString(
+                    playerBowls,
+                    (getMyStones() + ", ") + opponentBowls,
+                    kalahas);
+        } else {
+            return getNextBowl().makeString(
+                    playerBowls + (playerBowls.equals("") ? getMyStones() : ", " + getMyStones()),
+                    opponentBowls,
+                    kalahas);
+        }
+    }
+
 }

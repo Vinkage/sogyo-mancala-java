@@ -61,5 +61,5 @@ abstract class Bowl {
     }
 
 
-
+    protected abstract String makeString(String playerBowls, String opponentBowls, String kalahas);
 }

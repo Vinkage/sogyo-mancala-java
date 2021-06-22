@@ -77,8 +77,7 @@ public class MancalaImpl implements Mancala {
 
 	@Override
 	public boolean isEndOfGame() {
-        //domainReference.endTheGame();
-        return false;
+        return domainReference.endTheGame();
     }
 
 	@Override

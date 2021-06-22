@@ -32,12 +32,12 @@ abstract class Bowl {
     abstract boolean isEmpty();
     // abstract SmallBowl getNextSmallBowl();
 
-    void endTheGame() {
-        goToFirstBowlOfPlayerWithTurn().getNextBowl().endTheGame(goToFirstBowlOfPlayerWithTurn(), 0, 0);
+    boolean endTheGame() {
+        return goToFirstBowlOfPlayerWithTurn().getNextBowl().endTheGame(goToFirstBowlOfPlayerWithTurn(), 0, 0);
     }
 
-    protected void endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
-        if (isEmpty() == false && getMyOwner().equals(startOfLoop.getMyOwner())) return;
+    protected boolean endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
+        if (isEmpty() == false && getMyOwner().equals(startOfLoop.getMyOwner())) return false;
 
         if (this.equals(startOfLoop)) {
 
@@ -49,6 +49,7 @@ abstract class Bowl {
                 else if (scorePlayer > scoreOpponent) getMyOwner().isTheWinner();
                 else getMyOwner().getOpponent().isTheWinner();
 
+                return true;
             }
 
 
@@ -57,8 +58,9 @@ abstract class Bowl {
                 scorePlayer = scorePlayer + getMyStones();
             } else scoreOpponent = scoreOpponent + getMyStones();
 
-            getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
+            return getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
         }
+        return false;
     }
 
 

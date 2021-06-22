@@ -20,6 +20,15 @@ class Kalaha extends Bowl {
         return getNextBowl().getSmallBowl();
     }
 
+    @Override
+    SmallBowl goToFirstBowlOfPlayerWithTurn() {
+        if (getMyOwner().hasTheTurn()) {
+            return getNextBowl().getKalaha().getSmallBowl();
+        } else {
+            return getSmallBowl();
+        }
+    }
+
     SmallBowl getOpposite(int countTillThis) {
         return getNextBowl().getNextSmallBowlTimes(countTillThis - 1);
     }

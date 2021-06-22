@@ -5,7 +5,7 @@ abstract class Bowl {
     protected Player myOwner;
     protected Bowl nextBowl;
 
-    public int getMyRocks() {
+    public int getMyStones() {
         return myRocks;
     }
 
@@ -27,24 +27,25 @@ abstract class Bowl {
 
     abstract SmallBowl getSmallBowl();
 
+    abstract SmallBowl goToFirstBowlOfPlayerWithTurn();
+
+    abstract boolean isEmpty();
     // abstract SmallBowl getNextSmallBowl();
 
     void endTheGame() {
-        getNextBowl().endTheGame(this, 0, 0);
+        goToFirstBowlOfPlayerWithTurn().getNextBowl().endTheGame(goToFirstBowlOfPlayerWithTurn(), 0, 0);
     }
 
-    abstract boolean isEmpty();
-
-    private void endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
-        if (isEmpty() == false && myOwner.hasTheTurn()) return;
+    protected void endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
+        if (isEmpty() == false) return;
 
         if (getMyOwner().equals(startOfLoop.getMyOwner())) {
-            scorePlayer = scorePlayer + getMyRocks();
-        } else scoreOpponent = scoreOpponent + getMyRocks();
+            scorePlayer = scorePlayer + getMyStones();
+        } else scoreOpponent = scoreOpponent + getMyStones();
 
         if (this.equals(startOfLoop)) {
 
-            int playerKalaha = getKalaha().getMyRocks();
+            int playerKalaha = getKalaha().getMyStones();
 
             if (scorePlayer == playerKalaha) {
 
@@ -57,5 +58,7 @@ abstract class Bowl {
 
         } else getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
     }
+
+
 
 }

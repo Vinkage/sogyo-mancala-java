@@ -54,21 +54,21 @@ class BowlTest {
                 for (int i = 0; i < 14; i++) {
                     current = current.getNextBowl();
                     if (current.getClass() == SmallBowl.class)
-                        assertEquals(current.getMyRocks(), 4);
+                        assertEquals(current.getMyStones(), 4);
                 }
                 assertSame(current, firstSmallBowlPlayer);
             }
 
             @Test
             public void WHEN_chosen_by_the_player_that_has_the_turn_THEN_distribute_its_rocks_anti_clockwise() {
-                int initialRocks = firstSmallBowlPlayer.getMyRocks();
+                int initialRocks = firstSmallBowlPlayer.getMyStones();
                 firstSmallBowlPlayer.play();
                 Bowl neighbour = firstSmallBowlPlayer.getNextBowl();
                 for (int i = 0; i < initialRocks; i++) {
-                    assertEquals(5, neighbour.getMyRocks());
+                    assertEquals(5, neighbour.getMyStones());
                     neighbour = neighbour.getNextBowl();
                 }
-                assertEquals(4, neighbour.getMyRocks());
+                assertEquals(4, neighbour.getMyStones());
             }
         }
 
@@ -78,22 +78,22 @@ class BowlTest {
             @Test
             public void its_not_the_players_turn_WHEN_played_by_the_player_THEN_nothing_happens() {
                 firstSmallBowlPlayer.getMyOwner().switchTurn();
-                int initialRocks = firstSmallBowlPlayer.getMyRocks();
+                int initialRocks = firstSmallBowlPlayer.getMyStones();
                 firstSmallBowlPlayer.play();
                 Bowl neighbour = firstSmallBowlPlayer.getNextBowl();
                 for (int i = 0; i < initialRocks; i++) {
-                    assertEquals(4, neighbour.getMyRocks());
+                    assertEquals(4, neighbour.getMyStones());
                     neighbour = neighbour.getNextBowl();
                 }
-                assertEquals(4, neighbour.getMyRocks());
+                assertEquals(4, neighbour.getMyStones());
             }
 
             @Test
             public void play_can_reach_opponents_kalaha_WHEN_played_by_the_player_THEN_opponents_kalaha_is_skipped() {
                 SmallBowl playWillSkipFromThisBowl = goToSkippableState();
-                int opponentKalahaRocksBefore = firstSmallBowlPlayer.getNextSmallBowlTimes(11).getNextBowl().getMyRocks();
+                int opponentKalahaRocksBefore = firstSmallBowlPlayer.getNextSmallBowlTimes(11).getNextBowl().getMyStones();
                 playWillSkipFromThisBowl.play();
-                int opponentKalahaRocksAfter = firstSmallBowlPlayer.getNextSmallBowlTimes(11).getNextBowl().getMyRocks();
+                int opponentKalahaRocksAfter = firstSmallBowlPlayer.getNextSmallBowlTimes(11).getNextBowl().getMyStones();
                 assertEquals(opponentKalahaRocksBefore, opponentKalahaRocksAfter);
             }
 
@@ -104,7 +104,7 @@ class BowlTest {
                 assertTrue(firstSmallBowlPlayer.getMyOwner().hasTheTurn());
                 firstSmallBowlPlayer.play();
                 assertTrue(firstSmallBowlPlayer.getMyOwner().hasTheTurn());
-                assertEquals(5, firstSmallBowlPlayer.getNextBowl().getMyRocks());
+                assertEquals(5, firstSmallBowlPlayer.getNextBowl().getMyStones());
             }
 
             @Test
@@ -132,9 +132,9 @@ class BowlTest {
             public void the_play_would_skip_past_opponent_kalaha_at_the_last_rock_and_steal_WHEN_played_THEN_should_skip_and_steal_correctly() {
                 goToSkipAndStealOnLast();
                 SmallBowl firstSmallBowlOpponent = firstSmallBowlPlayer.getNextSmallBowlTimes(6);
-                assertEquals(3, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(3, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
                 firstSmallBowlOpponent.getNextSmallBowlTimes(3).play();
-                assertEquals(19, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(19, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
             }
 
             private void goToSkipAndStealOnLast() {
@@ -154,13 +154,13 @@ class BowlTest {
                 firstSmallBowlOpponent.getMyOwner().switchTurn();
                 // Should skip and steal
                 // this bowls rocks
-                assertEquals(10, firstSmallBowlOpponent.getNextSmallBowlTimes(3).getMyRocks());
+                assertEquals(10, firstSmallBowlOpponent.getNextSmallBowlTimes(3).getMyStones());
                 // End up here by looping around the board, thus skipping
-                assertEquals(0, firstSmallBowlOpponent.getMyRocks());
+                assertEquals(0, firstSmallBowlOpponent.getMyStones());
                 // Thus steal from last bowl on players side
-                assertEquals(8, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getMyRocks());
+                assertEquals(8, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getMyStones());
                 // Result is big kalaha booty
-                assertEquals(8, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(8, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
             }
 
             private void goToEndOfGameWhereOpponentWins() {
@@ -185,7 +185,7 @@ class BowlTest {
                 firstSmallBowlPlayer.getNextSmallBowlTimes(2).play();
                 // Set up for steal move
                 firstSmallBowlPlayer.getNextSmallBowlTimes(4).play();
-                assertEquals(2, firstSmallBowlPlayer.getKalaha().getMyRocks());
+                assertEquals(2, firstSmallBowlPlayer.getKalaha().getMyStones());
 
                 // opponent
                 // ... worst opening?
@@ -195,8 +195,8 @@ class BowlTest {
                 assertSame(firstSmallBowlPlayer.getNextSmallBowlTimes(4).getOpposite(), firstSmallBowlPlayer.getKalaha().getNextBowl().getNextBowl());
                 firstSmallBowlPlayer.play();
                 // Check if i did it properly on paper
-                assertEquals(9, firstSmallBowlPlayer.getKalaha().getMyRocks());
-                assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(4).getMyRocks());
+                assertEquals(9, firstSmallBowlPlayer.getKalaha().getMyStones());
+                assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(4).getMyStones());
                 // assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(4).getOpposite().getMyRocks());
 
                 // opponent
@@ -204,20 +204,20 @@ class BowlTest {
 
                 //Player
                 firstSmallBowlPlayer.getNextSmallBowlTimes(3).play();
-                assertEquals(10, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(10, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
 
                 // opponent makes stupid move again
                 firstSmallBowlOpponent.getNextSmallBowlTimes(1).play();
 
                 // player makes big steal
                 //assertEquals(0, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
-                assertEquals(10, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(10, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
                 firstSmallBowlPlayer.getNextSmallBowlTimes(2).play();
-                assertEquals(19, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(19, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
 
                 // opponent steals tiny booty
                 firstSmallBowlOpponent.play();
-                assertEquals(3, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(3, firstSmallBowlOpponent.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
 
                 // player is stalling until the end
                 firstSmallBowlPlayer.play();
@@ -230,7 +230,7 @@ class BowlTest {
                 firstSmallBowlOpponent.getNextSmallBowlTimes(5).play();
                 // everything empty!
                 for (int i = 0; i < 6; i++) {
-                    assertEquals(0, firstSmallBowlOpponent.getNextSmallBowlTimes(i).getMyRocks());
+                    assertEquals(0, firstSmallBowlOpponent.getNextSmallBowlTimes(i).getMyStones());
                 }
 
             }
@@ -251,7 +251,7 @@ class BowlTest {
                 firstSmallBowlOpponent.getNextSmallBowlTimes(4).play();
 
                 // Playing this bowl should give a skip!
-                assertTrue(firstSmallBowlPlayer.getNextSmallBowlTimes(5).getMyRocks() >= 8);
+                assertTrue(firstSmallBowlPlayer.getNextSmallBowlTimes(5).getMyStones() >= 8);
                 return firstSmallBowlPlayer.getNextSmallBowlTimes(5);
             }
         }
@@ -285,7 +285,7 @@ class BowlTest {
                 assertSame(firstSmallBowlPlayer.getNextSmallBowlTimes(1).getOpposite(), firstSmallBowlPlayer.getKalaha().getSmallBowl().getNextSmallBowlTimes(4));
                 // assertSame(firstSmallBowlPlayer.getOpposite(), firstSmallBowlPlayer.getKalaha().getNextSmallBowlTimes(5));
                 firstSmallBowlPlayer.play();
-                assertEquals(7, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyRocks());
+                assertEquals(7, firstSmallBowlPlayer.getNextSmallBowlTimes(5).getNextBowl().getMyStones());
             }
 
         }
@@ -317,7 +317,7 @@ class BowlTest {
             for (int i = 0; i < 14; i++) {
                 current = current.getNextBowl();
                 if (current.getClass() == Kalaha.class)
-                    assertEquals(current.getMyRocks(), 0);
+                    assertEquals(current.getMyStones(), 0);
             }
         }
     }

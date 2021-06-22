@@ -85,6 +85,15 @@ public class SmallBowl extends Bowl {
         return this;
     }
 
+    @Override
+    SmallBowl goToFirstBowlOfPlayerWithTurn() {
+        if (getMyOwner().hasTheTurn()) {
+            return getKalaha().getNextBowl().getKalaha().getSmallBowl();
+        } else {
+            return getKalaha().getSmallBowl();
+        }
+    }
+
     Kalaha getKalaha() {
         return getNextBowl().getKalaha();
     }
@@ -94,8 +103,8 @@ public class SmallBowl extends Bowl {
             getOpposite().getKalaha().claimStolenBooty(myRocks);
             myRocks = 0;
 
-        } else if (getMyRocks() == 1 &&
-                getOpposite().getMyRocks() != 0) {
+        } else if (getMyStones() == 1 &&
+                getOpposite().getMyStones() != 0) {
 
             getKalaha().claimStolenBooty(myRocks);
             myRocks = 0;

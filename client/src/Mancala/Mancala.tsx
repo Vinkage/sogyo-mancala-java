@@ -9,7 +9,7 @@ import "./Mancala.css";
  * users to enter two player names and start a new game.
  * If there's an active game this component holds the game state. This game state can be passed as a prop
  * to child components as needed.
- * 
+ *
  * Child components can modify the game state by calling the setGameState (which they recieve as prop.)
  */
 export function Mancala() {
@@ -20,9 +20,16 @@ export function Mancala() {
     // To check if code you added also follows the rules of hooks, run "npm run lint" in the command line
     const [ gameState, setGameState ] = useState<GameState | undefined>(undefined);
 
-    if (!gameState) {
-        return <StartGame setGameState={setGameState} />
+    if (localStorage.getItem("state") !== null) {
+        var state = localStorage.getItem("state");
+        const gameState = JSON.parse(state as string);
+        return <Play gameState={gameState} setGameState={setGameState} />
     }
+
+    if (!gameState) {
+        return <StartGame gameState={gameState} setGameState={setGameState} />
+    }
+
 
     return <Play gameState={gameState} setGameState={setGameState} />
 }

@@ -16,4 +16,12 @@ interface Player {
 interface Pit {
     index: number;
     nrOfStones: number;
+    state: PitState;
+    setPitState: (newPitState: PitState) => void;
 }
+
+
+interface PitState {
+    stoneElements: JSX.Element[] | undefined;
+    }
+

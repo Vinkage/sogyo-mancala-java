@@ -77,7 +77,7 @@ public class MancalaImpl implements Mancala {
 
         return domainReference.toStateArray(new int[15], 0);
     }
-	
+
 	@Override
 	public int getStonesForPit(int index) {
         if (MancalaImpl.PLAYER_ONE_PITS.contains(index)) {

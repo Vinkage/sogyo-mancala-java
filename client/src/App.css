@@ -1,9 +1,28 @@
+html {
+    height: 100%;
+}
+
 body {
     margin: 0px;
     padding: 0px;
     background-color: #eeeeee;
+    height: 100%;
+}
+
+#root {
+    height: 100%;
+    --board-color: rgb(222,184,135);
+    --recess-color: rgb(188,143,143);
 }
 
 .main-content {
-    padding: 8px;
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+
+    flex: 0 1 auto;
+
+    height: calc(100% - (107px))
 }

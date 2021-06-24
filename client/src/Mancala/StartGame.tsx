@@ -54,30 +54,23 @@ export function StartGame({gameState, setGameState }: StartGameProps) {
         }
     }
 
-    if (localStorage.getItem("state") !== null) {
-        var state = localStorage.getItem("state");
-        const gameState = JSON.parse(state as string);
-        setGameState(gameState);
-        return <Play gameState={gameState} setGameState={setGameState} />
-    } else {
-        return (
-            <form onSubmit={(e) => tryStartGame(e)}>
-                <input value={playerOne}
-                    placeholder="Player 1 name"
-                    onChange={(e) => setPlayerOne(e.target.value)}
-                />
+    return (
+        <form onSubmit={(e) => tryStartGame(e)}>
+            <input value={playerOne}
+                placeholder="Player 1 name"
+                onChange={(e) => setPlayerOne(e.target.value)}
+            />
 
-                <input value={playerTwo}
-                    placeholder="Player 2 name"
-                    onChange={(e) => setPlayerTwo(e.target.value)}
-                />
+            <input value={playerTwo}
+                placeholder="Player 2 name"
+                onChange={(e) => setPlayerTwo(e.target.value)}
+            />
 
-                <p className="errorMessage">{errorMessage}</p>
+            <p className="errorMessage">{errorMessage}</p>
 
-                <button className="startGameButton" type="submit">
-                    Play Mancala!
-                </button>
-            </form>
-        )
-    }
+            <button className="startGameButton" type="submit">
+                Play Mancala!
+            </button>
+        </form>
+    )
 }

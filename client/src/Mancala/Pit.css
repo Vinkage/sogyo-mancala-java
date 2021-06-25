@@ -1,0 +1,46 @@
+.Pit {
+    display: inline-flex;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 16%;
+}
+
+.Recession {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--recess-color);
+}
+
+.Pit .Recession {
+    border-radius: 50%;
+    height: 50%;
+    width: 100%;
+}
+
+.Kalaha {
+    display: inline-flex;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 10%;
+}
+
+.Kalaha .Recession {
+    border-radius: 30%;
+    height: 50%;
+    width: 100%;
+}
+
+.Stone {
+    position: absolute;
+    background: gray;
+    border-radius: 50%;
+    border: 2px solid black;
+    height: 16px;
+    width: 16px;
+    min-height: 5px;
+}

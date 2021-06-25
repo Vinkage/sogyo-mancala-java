@@ -1,0 +1,44 @@
+/** Add some styles */
+#board {
+    display: flex;
+    background: var(--board-color);
+    padding: 20px;
+
+    border-radius: 10%;
+
+    justify-content: center;
+    flex-flow: row;
+    flex-direction: row;
+
+    width: 800px;
+    height: 400px;
+}
+
+#pits {
+    position: relative;
+    display: inline-flex;
+
+
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 80%;
+}
+
+.playArea {
+    position: relative;
+}
+
+.playerStatus {
+    position: relative;
+    display: flex;
+
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    height: 100px;
+
+}

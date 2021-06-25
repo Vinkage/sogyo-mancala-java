@@ -1,12 +1,12 @@
 package mancala.domain;
 
 abstract class Bowl {
-    protected int myRocks;
+    protected int myStones;
     protected Player myOwner;
     protected Bowl nextBowl;
 
-    public int getMyRocks() {
-        return myRocks;
+    public int getMyStones() {
+        return myStones;
     }
 
     public Bowl getNextBowl() {
@@ -25,37 +25,43 @@ abstract class Bowl {
 
     abstract Kalaha getKalaha();
 
-    abstract SmallBowl getSmallBowl();
+    abstract SmallBowl getNextSmallBowl();
 
+    abstract SmallBowl goToFirstBowlOfPlayerWithTurn();
+
+    abstract boolean isEmpty();
     // abstract SmallBowl getNextSmallBowl();
 
     void endTheGame() {
-        getNextBowl().endTheGame(this, 0, 0);
+        goToFirstBowlOfPlayerWithTurn().getNextBowl().endTheGame(goToFirstBowlOfPlayerWithTurn(), 0, 0);
     }
 
-    abstract boolean isEmpty();
-
-    private void endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
-        if (isEmpty() == false && myOwner.hasTheTurn()) return;
-
-        if (getMyOwner().equals(startOfLoop.getMyOwner())) {
-            scorePlayer = scorePlayer + getMyRocks();
-        } else scoreOpponent = scoreOpponent + getMyRocks();
+    protected void endTheGame(Bowl startOfLoop, int scorePlayer, int scoreOpponent) {
+        if (isEmpty() == false && getMyOwner().equals(startOfLoop.getMyOwner())) return;
 
         if (this.equals(startOfLoop)) {
 
-            int playerKalaha = getKalaha().getMyRocks();
+            int playerKalaha = getKalaha().getMyStones();
 
             if (scorePlayer == playerKalaha) {
 
                 if (scorePlayer == scoreOpponent) getMyOwner().gotADraw();
                 else if (scorePlayer > scoreOpponent) getMyOwner().isTheWinner();
                 else getMyOwner().getOpponent().isTheWinner();
-
             }
 
 
-        } else getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
+        } else {
+            if (getMyOwner().equals(startOfLoop.getMyOwner())) {
+                scorePlayer = scorePlayer + getMyStones();
+            } else scoreOpponent = scoreOpponent + getMyStones();
+
+            getNextBowl().endTheGame(startOfLoop, scorePlayer, scoreOpponent);
+        }
     }
 
+
+    protected abstract String makeString(String playerBowls, String opponentBowls, String kalahas);
+
+    protected abstract int[] toStateArray(int[] stateArray, int index);
 }

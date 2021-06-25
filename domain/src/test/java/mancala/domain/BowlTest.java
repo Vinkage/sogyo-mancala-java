@@ -272,7 +272,7 @@ class BowlTest {
         class endGameBehaviour {
 
             @Test
-            void given_all_small_bowls_of_the_player_are_empty_when_a_play_ends_then_tell_players_who_won() {
+            void given_all_small_bowls_of_the_player_that_did_the_turn_are_empty_when_a_play_ends_then_tell_players_who_won() {
                 setupGameSituationAndFailIfInvalid(new int[] {0,0,0,0,0,1,0,4,4,4,4,4,4,0});
                 Player player = referenceSmallBowl.getMyOwner();
                 Player opponent = referenceSmallBowl.getNextSmallBowlTimes(6).getMyOwner();
@@ -300,6 +300,15 @@ class BowlTest {
                 referenceSmallBowl.getNextSmallBowlTimes(5).play();
                 System.out.println(referenceSmallBowl.stateString());
                 assertTrue(referenceSmallBowl.getMyOwner().won() && referenceSmallBowl.getMyOwner().getOpponent().won());
+            }
+
+            @Test
+            void given_that_the_opponents_board_is_emptied_by_stealing_when_player_made_a_play_then_tell_players_who_won() {
+                setupGameSituationAndFailIfInvalid(new int[] {1,0,0,0,1,0,0,1,0,0,0,0,0,0});
+                System.out.println(referenceSmallBowl.stateString());
+                referenceSmallBowl.getNextSmallBowlTimes(4).play();
+                System.out.println(referenceSmallBowl.stateString());
+                assertTrue(referenceSmallBowl.getMyOwner().won() || referenceSmallBowl.getMyOwner().getOpponent().won());
             }
 
         }

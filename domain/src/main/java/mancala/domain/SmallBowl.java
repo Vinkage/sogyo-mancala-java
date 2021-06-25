@@ -88,6 +88,7 @@ public class SmallBowl extends Bowl {
 
         getMyOwner().switchTurn();
 
+        endTheGame();
     }
 
     SmallBowl getNextSmallBowl() {
